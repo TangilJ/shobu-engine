@@ -1,14 +1,8 @@
-#ifdef STANDALONE_TESTS
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#else
-#define DOCTEST_CONFIG_IMPLEMENT
-#endif
 
 #include <doctest/doctest.h>
-
 #include "movegen.h"
 #include "types.h"
-#include "print.h"
 
 
 TEST_CASE("Passive move up - one stone")
@@ -72,21 +66,21 @@ TEST_CASE("Passive move up - four stones")
         0b0000'0000'0000'0000,
         0b0000'0000'0000'0000
     };
-    
+
     const BoardArray expectedOwn2 = {
         0b0000'0011'0000'1100,
         0b0000'0000'0000'0000,
         0b0000'0000'0000'0000,
         0b0000'0000'0000'0000
     };
-    
+
     const BoardArray expectedOwn3 = {
         0b0001'0000'0010'1100,
         0b0000'0000'0000'0000,
         0b0000'0000'0000'0000,
         0b0000'0000'0000'0000
     };
-    
+
     CHECK(4 == states.length());
     CHECK(expectedOwn0 == states[0].own);
     CHECK(expectedOwn1 == states[1].own);

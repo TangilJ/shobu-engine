@@ -26,6 +26,7 @@ add_subdirectory(extern/doctest)
 add_executable(
         ShobuTests
         test/passivemovetest.cpp
+        test/aggressivemovetest.cpp
 )
 target_compile_definitions(ShobuTests PRIVATE STANDALONE_TESTS)
 target_link_libraries(ShobuTests ShobuEngine)
