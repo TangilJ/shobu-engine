@@ -23,11 +23,12 @@ enum BoardType : int {
     BottomRight = 3
 };
 
+using BoardArray = std::array<Board, 4>;
+
 // Index 0 = top left board, 1 = top right, 2 = bottom left, 3 = bottom right 
-// TODO: Use std::array instead?
 struct State {
-    Board own[4];
-    Board enemy[4];
+    BoardArray own;
+    BoardArray enemy;
 };
 
 
@@ -46,6 +47,10 @@ public:
     {
         array[size] = state;
         size++;
+    }
+    
+    int length() {
+        return size;
     }
 };
 

@@ -13,11 +13,20 @@ else ()
     message(FATAL_ERROR "CMAKE_BUILD_TYPE was not 'Debug' or 'Release'")
 endif ()
 
-add_subdirectory(src/engine)
 
+add_subdirectory(src/engine)
 add_executable(
         Shobu
         src/main.cpp
 )
 target_link_libraries(Shobu ShobuEngine)
 
+
+add_subdirectory(extern/doctest)
+add_executable(
+        ShobuTests
+        test/passivemovetest.cpp
+)
+target_compile_definitions(ShobuTests PRIVATE STANDALONE_TESTS)
+target_link_libraries(ShobuTests ShobuEngine)
+target_link_libraries(ShobuTests doctest)
