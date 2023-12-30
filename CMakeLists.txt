@@ -13,14 +13,11 @@ else ()
     message(FATAL_ERROR "CMAKE_BUILD_TYPE was not 'Debug' or 'Release'")
 endif ()
 
+add_subdirectory(src/engine)
 
 add_executable(
         Shobu
         src/main.cpp
-        src/types.h
-        src/movegen.cpp
-        src/movegen.h
-        src/print.cpp
-        src/print.h
-        src/consts.h
 )
+target_link_libraries(Shobu ShobuEngine)
+
