@@ -2,18 +2,19 @@
 #include "types.h"
 #include "consts.h"
 
-void addPassiveMoves(BoardType passiveBoard, State &state, States &states)
+void addPassiveMoves(BoardType passiveBoard, const State &state, States &states)
 {
-    Board ownStones = state.own[passiveBoard];
-    Board enemyStones = state.enemy[passiveBoard];
+    const Board ownStones = state.own[passiveBoard];
+    const Board enemyStones = state.enemy[passiveBoard];
 
     // Go through each own stone on passive board
-    while (ownStones) {
-        Board currentStone = ownStones & -ownStones;
-        ownStones ^= currentStone;
+    Board stonesLeft = ownStones;
+    while (stonesLeft) {
+        const Board currentStone = stonesLeft & -stonesLeft;
+        stonesLeft ^= currentStone;
 
         // Passive move of up 1 not allowed if there is stone above
-        Board moveOne = currentStone << 4;
+        const Board moveOne = currentStone << 4;
         bool blocked = (ownStones | enemyStones) & moveOne;
 
         // Passive move of 1 up not allowed if it would push self off board
@@ -26,7 +27,7 @@ void addPassiveMoves(BoardType passiveBoard, State &state, States &states)
         Board ownBoardAfterPassive = ownStones ^ currentStone | moveOne;
 
         State newState = state;
-        state.own[ownStones] = ownBoardAfterPassive;
+        newState.own[passiveBoard] = ownBoardAfterPassive;
         states.add(newState);
     }
 }
