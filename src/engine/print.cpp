@@ -5,10 +5,14 @@
 #include <bitset>
 #include <cassert>
 
+std::string toBitString(Board board) {
+    std::bitset<16> x(board);
+    return x.to_string();
+}
+
 void printBits(Board board)
 {
-    std::bitset<16> x(board);
-    std::cout << x << std::endl;
+    std::cout << toBitString(board) << std::endl;
 }
 
 void print(Board board)
@@ -34,6 +38,7 @@ void print(State state)
     std::cout << std::endl;
     printTwoBoards(state.own[2], state.own[3],
                    state.enemy[2], state.enemy[3]);
+    std::cout << std::endl;
 }
 
 void printTwoBoards(TwoBoards boards)

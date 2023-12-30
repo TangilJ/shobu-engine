@@ -2,6 +2,9 @@
 #define SHOBU_PRINT_H
 
 #include "types.h"
+#include <string>
+
+std::string toBitString(Board board);
 
 void printBits(Board board);
 
