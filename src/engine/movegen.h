@@ -7,9 +7,9 @@ void addPassiveMoves(BoardType passiveBoard,
                      const State &state,
                      States &states);
 
-TwoBoards addStoneAggressiveMove(Board ownAggrStones,
-                                 Board enemyAggrStones,
-                                 Board stone);
+TwoBoards applyStoneAggressiveMove(Board ownAggrStones,
+                                   Board enemyAggrStones,
+                                   Board stone);
 
 void addBothMoves(State state,
                   BoardType aggressiveBoard,

@@ -35,9 +35,9 @@ void addPassiveMoves(BoardType passiveBoard, const State &state, States &states)
 
 // TODO: Template this for all directions
 // Returns 0 if aggressive move not allowed
-TwoBoards addStoneAggressiveMove(Board ownAggrStones,
-                                 Board enemyAggrStones,
-                                 Board stone)
+TwoBoards applyStoneAggressiveMove(Board ownAggrStones,
+                                   Board enemyAggrStones,
+                                   Board stone)
 {
 #pragma region Move restrictions
     // Aggressive move of 1 up not allowed when pushing more than 1 stone
@@ -84,7 +84,7 @@ void addBothMoves(State state,
         ownStones ^= currentStone;
 
 #pragma region Add first move
-        TwoBoards aggrMoveResult = addStoneAggressiveMove(
+        TwoBoards aggrMoveResult = applyStoneAggressiveMove(
             ownStones, enemyStones, currentStone);
 
         if (aggrMoveResult == 0)
@@ -106,7 +106,7 @@ void addBothMoves(State state,
         stateAfterOneMove.own[aggressiveBoard] = ownStonesAfterMove;
         stateAfterOneMove.enemy[aggressiveBoard] = enemyStonesAfterMove;
 
-        TwoBoards aggrMoveResult2 = addStoneAggressiveMove(
+        TwoBoards aggrMoveResult2 = applyStoneAggressiveMove(
             ownStonesAfterMove, enemyStonesAfterMove, currentStone);
 
         if (aggrMoveResult2 == 0)
