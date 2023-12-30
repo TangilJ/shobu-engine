@@ -1,6 +1,7 @@
 #include <iostream>
 #include "types.h"
 #include "consts.h"
+#include "print.h"
 
 void addPassiveMoves(BoardType passiveBoard, const State &state, States &states)
 {
@@ -43,7 +44,8 @@ TwoBoards addStoneAggressiveMove(Board ownAggrStones,
     Board moveOne = stone << 4;
     Board moveTwo = stone << 8;
     Board blockPath = moveOne | moveTwo;
-    bool stonesInBlockPath = (ownAggrStones | enemyAggrStones) & blockPath;
+    bool stonesInBlockPath = ((ownAggrStones | enemyAggrStones) & blockPath)
+                             == blockPath;
 
     // Aggressive move of 1 up not allowed when pushing own stone
     bool pushingOwnStone = ownAggrStones & moveOne;
@@ -62,7 +64,7 @@ TwoBoards addStoneAggressiveMove(Board ownAggrStones,
     // Enemy stone is pushed up if it exists. If there is an enemy stone one
     // square above, duplicate it up and remove its previous position
     enemyAggrStones = (moveOne & enemyAggrStones) << 4
-                      | enemyAggrStones & !moveOne;
+                      | enemyAggrStones & ~moveOne;
 #pragma endregion
 
     return (TwoBoards) ownAggrStones << 16 | enemyAggrStones;
