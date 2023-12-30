@@ -34,14 +34,10 @@ void addPassiveMoves(BoardType passiveBoard, const State &state, States &states)
 
 // TODO: Template this for all directions
 // Returns 0 if aggressive move not allowed
-TwoBoards addStoneAggressiveMove(State state, Board stone,
-                                 BoardType aggressiveBoard,
-                                 BoardType passiveBoard,
-                                 States &states)
+TwoBoards addStoneAggressiveMove(Board ownAggrStones,
+                                 Board enemyAggrStones,
+                                 Board stone)
 {
-    Board ownAggrStones = state.own[aggressiveBoard];
-    Board enemyAggrStones = state.enemy[aggressiveBoard];
-
 #pragma region Move restrictions
     // Aggressive move of 1 up not allowed when pushing more than 1 stone
     Board moveOne = stone << 4;
@@ -69,33 +65,25 @@ TwoBoards addStoneAggressiveMove(State state, Board stone,
                       | enemyAggrStones & !moveOne;
 #pragma endregion
 
-#pragma region Add passive moves
-    State stateAfterAggressiveMove = state;
-    state.own[aggressiveBoard] = ownAggrStones;
-    state.enemy[aggressiveBoard] = enemyAggrStones;
-
-    addPassiveMoves(passiveBoard, stateAfterAggressiveMove, states);
-#pragma endregion
-
     return (TwoBoards) ownAggrStones << 16 | enemyAggrStones;
 }
 
-void addAggressiveMoves(State state,
-                        BoardType aggressiveBoard,
-                        BoardType passiveBoard,
-                        States &states)
+void addBothMoves(State state,
+                  BoardType aggressiveBoard,
+                  BoardType passiveBoard,
+                  States &states)
 {
     Board ownStones = state.own[aggressiveBoard];
+    Board enemyStones = state.enemy[aggressiveBoard];
 
     // Go through each own stone on passive board
     while (ownStones) {
         Board currentStone = ownStones & -ownStones;
         ownStones ^= currentStone;
 
-        TwoBoards aggrMoveResult = addStoneAggressiveMove(state, currentStone,
-                                                          aggressiveBoard,
-                                                          passiveBoard,
-                                                          states);
+#pragma region Add first move
+        TwoBoards aggrMoveResult = addStoneAggressiveMove(
+            ownStones, enemyStones, currentStone);
 
         if (aggrMoveResult == 0)
             continue;
@@ -104,20 +92,40 @@ void addAggressiveMoves(State state,
         Board ownStonesAfterMove = aggrMoveResult >> 16;
         Board enemyStonesAfterMove = (Board) aggrMoveResult;
 
+        State stateWithAggressiveMove = state;
+        state.own[aggressiveBoard] = ownStonesAfterMove;
+        state.enemy[aggressiveBoard] = enemyStonesAfterMove;
+
+        addPassiveMoves(passiveBoard, stateWithAggressiveMove, states);
+#pragma endregion
+
+#pragma region Add second move
         State stateAfterOneMove = state;
         stateAfterOneMove.own[aggressiveBoard] = ownStonesAfterMove;
         stateAfterOneMove.enemy[aggressiveBoard] = enemyStonesAfterMove;
 
-        addStoneAggressiveMove(stateAfterOneMove, currentStone,
-                               aggressiveBoard, passiveBoard,
-                               states);
+        TwoBoards aggrMoveResult2 = addStoneAggressiveMove(
+            ownStonesAfterMove, enemyStonesAfterMove, currentStone);
+
+        if (aggrMoveResult2 == 0)
+            continue;
+
+        Board ownStonesAfterMove2 = aggrMoveResult2 >> 16;
+        Board enemyStonesAfterMove2 = (Board) aggrMoveResult2;
+
+        State stateWithAggressiveMove2 = stateAfterOneMove;
+        stateWithAggressiveMove2.own[aggressiveBoard] = ownStonesAfterMove2;
+        stateWithAggressiveMove2.enemy[aggressiveBoard] = enemyStonesAfterMove2;
+
+        addPassiveMoves(passiveBoard, stateWithAggressiveMove2, states);
+#pragma endregion
     }
 }
 
 void addMoves(State state, States &states)
 {
-    addAggressiveMoves(state, TopLeft, BottomRight, states);
-    addAggressiveMoves(state, BottomLeft, BottomRight, states);
-    addAggressiveMoves(state, TopRight, BottomLeft, states);
-    addAggressiveMoves(state, BottomRight, BottomLeft, states);
+    addBothMoves(state, TopLeft, BottomRight, states);
+    addBothMoves(state, BottomLeft, BottomRight, states);
+    addBothMoves(state, TopRight, BottomLeft, states);
+    addBothMoves(state, BottomRight, BottomLeft, states);
 }

@@ -3,19 +3,18 @@
 
 #include "types.h"
 
-void addPassiveMoves(BoardType passiveBoard, 
-                     const State &state, 
+void addPassiveMoves(BoardType passiveBoard,
+                     const State &state,
                      States &states);
 
-TwoBoards addStoneAggressiveMove(State state, Board stone,
-                                 BoardType aggressiveBoard,
-                                 BoardType passiveBoard,
-                                 States &states);
+TwoBoards addStoneAggressiveMove(Board ownAggrStones,
+                                 Board enemyAggrStones,
+                                 Board stone);
 
-void addAggressiveMoves(State state,
-                        BoardType aggressiveBoard,
-                        BoardType passiveBoard,
-                        States &states);
+void addBothMoves(State state,
+                  BoardType aggressiveBoard,
+                  BoardType passiveBoard,
+                  States &states);
 
 void addMoves(State state, States &states);
 
