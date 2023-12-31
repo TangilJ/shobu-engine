@@ -20,22 +20,6 @@ constexpr Board move(const Board board)
 }
 
 template <Direction Direction>
-constexpr Board edge()
-{
-    // @formatter:off
-    return Direction == Direction::Up        ? top
-         : Direction == Direction::UpRight   ? top & right
-         : Direction == Direction::Right     ? right
-         : Direction == Direction::DownRight ? bottom & right
-         : Direction == Direction::Down      ? bottom
-         : Direction == Direction::DownLeft  ? bottom & left
-         : Direction == Direction::Left      ? left
-         : Direction == Direction::UpLeft    ? top & left
-         : 0;
-    // @formatter:on
-}
-
-template <Direction Direction>
 void addPassiveMoves(const BoardType passiveBoard,
                      const State& state,
                      States& states)
