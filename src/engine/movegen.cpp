@@ -20,6 +20,22 @@ constexpr Board move(const Board board)
 }
 
 template <Direction Direction>
+constexpr Board edge()
+{
+    // @formatter:off
+    return Direction == Direction::Up        ? top
+         : Direction == Direction::UpRight   ? top & right
+         : Direction == Direction::Right     ? right
+         : Direction == Direction::DownRight ? bottom & right
+         : Direction == Direction::Down      ? bottom
+         : Direction == Direction::DownLeft  ? bottom & left
+         : Direction == Direction::Left      ? left
+         : Direction == Direction::UpLeft    ? top & left
+         : 0;
+    // @formatter:on
+}
+
+template <Direction Direction>
 void addPassiveMoves(const BoardType passiveBoard,
                      const State& state,
                      States& states)
@@ -40,7 +56,7 @@ void addPassiveMoves(const BoardType passiveBoard,
         const bool blocked = (ownStones | enemyStones) & moveOne;
 
         // Passive move not allowed if it would push self off board
-        const bool onEdge = top & currentStone;
+        const bool onEdge = edge<Direction>() & currentStone;
 
         if (blocked || onEdge)
             continue;
@@ -74,7 +90,7 @@ TwoBoards applyStoneAggressiveMove(const Board ownStones,
     const bool pushingOwnStone = ownStones & moveOne;
 
     // Aggressive move not allowed if it would push self off board
-    const bool onEdge = top & stone;
+    const bool onEdge = edge<Direction>() & stone;
 
     if (stonesInBlockPath || pushingOwnStone || onEdge)
         return 0;
