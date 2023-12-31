@@ -47,7 +47,7 @@ void print(const State state)
 void printTwoBoards(const TwoBoards boards)
 {
     const Board first = boards >> 16;
-    const Board second = (Board)boards;
+    const Board second = static_cast<Board>(boards);
     printTwoBoards(first, second, 0, 0);
 }
 

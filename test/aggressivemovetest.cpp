@@ -10,7 +10,7 @@ TEST_CASE("Aggressive move up - 1 own, 0 enemy")
 
     const TwoBoards result = applyStoneAggressiveMove(own, enemy, stone);
     const Board ownResult = result >> 16;
-    const Board enemyResult = (Board) result;
+    const Board enemyResult = static_cast<Board>(result);
 
     const Board ownExpected = 0b0000'0100'0000'0000;
     const Board enemyExpected = 0b0000'0000'0000'0000;
@@ -27,7 +27,7 @@ TEST_CASE("Aggressive move up - many own, 0 enemy")
 
     const TwoBoards result = applyStoneAggressiveMove(own, enemy, stone);
     const Board ownResult = result >> 16;
-    const Board enemyResult = (Board) result;
+    const Board enemyResult = static_cast<Board>(result);
 
     const Board ownExpected = 0b0110'1110'0000'0110;
     const Board enemyExpected = 0b0000'0000'0000'0000;
@@ -44,7 +44,7 @@ TEST_CASE("Aggressive move up - 1 own, pushing 1 enemy")
 
     const TwoBoards result = applyStoneAggressiveMove(own, enemy, stone);
     const Board ownResult = result >> 16;
-    const Board enemyResult = (Board) result;
+    const Board enemyResult = static_cast<Board>(result);
 
     const Board ownExpected = 0b0000'0000'1000'0000;
     const Board enemyExpected = 0b0000'1000'0000'0000;
@@ -61,7 +61,7 @@ TEST_CASE("Aggressive move up - many own, pushing 1 enemy of many")
 
     const TwoBoards result = applyStoneAggressiveMove(own, enemy, stone);
     const Board ownResult = result >> 16;
-    const Board enemyResult = (Board) result;
+    const Board enemyResult = static_cast<Board>(result);
 
     const Board ownExpected = 0b0110'1000'0110'0100;
     const Board enemyExpected = 0b0000'0010'0000'1001;

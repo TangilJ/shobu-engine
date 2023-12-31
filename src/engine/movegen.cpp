@@ -73,7 +73,7 @@ TwoBoards applyStoneAggressiveMove(const Board ownStones,
         | enemyStones & ~moveOne;
 #pragma endregion
 
-    return (TwoBoards)ownStonesMoved << 16 | enemyStonesMoved;
+    return static_cast<TwoBoards>(ownStonesMoved) << 16 | enemyStonesMoved;
 }
 
 void addBothMoves(const State state,
@@ -100,7 +100,7 @@ void addBothMoves(const State state,
 
         // TODO: See if this can be wrapped
         const Board ownStonesMoved = aggrMoveResult >> 16;
-        const Board enemyStonesMoved = (Board)aggrMoveResult;
+        const Board enemyStonesMoved = static_cast<Board>(aggrMoveResult);
 
         State stateWithAggressiveMove = state;
         stateWithAggressiveMove.own[aggressiveBoard] = ownStonesMoved;
@@ -121,7 +121,7 @@ void addBothMoves(const State state,
             continue;
 
         const Board ownStonesAfterMove2 = aggrMoveResult2 >> 16;
-        const Board enemyStonesAfterMove2 = (Board)aggrMoveResult2;
+        const Board enemyStonesAfterMove2 = static_cast<Board>(aggrMoveResult2);
 
         State stateWithAggressiveMove2 = stateAfterOneMove;
         stateWithAggressiveMove2.own[aggressiveBoard] = ownStonesAfterMove2;
