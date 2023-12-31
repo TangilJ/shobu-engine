@@ -11,5 +11,9 @@ add_library(
         print.cpp
         print.h
         consts.h
+        perft.cpp
+        perft.h
+        search.cpp
+        search.h
 )
 target_include_directories(ShobuEngine INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

@@ -49,7 +49,7 @@ struct State
 struct States
 {
 private:
-    static constexpr int arrayMaxSize = 100;
+    static constexpr int arrayMaxSize = 300;
     unsigned short size = 0;
     std::array<State, arrayMaxSize> array{};
 

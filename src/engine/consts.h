@@ -15,4 +15,9 @@ constexpr Board right            = 0b0001'0001'0001'0001;
 constexpr Board empty            = 0b0000'0000'0000'0000;
 // @formatter:on
 
+constexpr State startState = {
+    {ownStartPieces, ownStartPieces, ownStartPieces, ownStartPieces},
+    {enemyStartPieces, enemyStartPieces, enemyStartPieces, enemyStartPieces}
+};
+
 #endif //SHOBU_CONSTS_H

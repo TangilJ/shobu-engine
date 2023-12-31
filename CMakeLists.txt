@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 23)
 
 # SIMD code for NNUE makes use of AVX extension
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions("-mavx -O0")
+    add_definitions("-mpopcnt -O0")
 elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_definitions("-mavx -Ofast")
+    add_definitions("-mpopcnt -Ofast")
 else ()
     message(FATAL_ERROR "CMAKE_BUILD_TYPE was not 'Debug' or 'Release'")
 endif ()
