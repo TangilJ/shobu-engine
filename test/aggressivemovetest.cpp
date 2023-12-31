@@ -2,10 +2,11 @@
 #include "movegen.h"
 #include "consts.h"
 
+template <Direction Direction>
 void checkLegal(const Board own, const Board enemy, const Board stone,
                 const Board ownExpected, const Board enemyExpected)
 {
-    const TwoBoards result = applyStoneAggressiveMove<Direction::Up>(
+    const TwoBoards result = applyStoneAggressiveMove<Direction>(
         own, enemy, stone
     );
     const Board ownResult = result >> 16;
@@ -27,28 +28,30 @@ void checkIllegal(const Board own, const Board enemy, const Board stone)
 #pragma region Up
 TEST_CASE("Aggressive move up - 1 own, 0 enemy")
 {
-    checkLegal(0b0000'0000'0100'0000, empty, 0b0000'0000'0100'0000,
-               0b0000'0100'0000'0000, empty);
+    checkLegal<Direction::Up>(0b0000'0000'0100'0000, empty,
+                              0b0000'0000'0100'0000,
+                              0b0000'0100'0000'0000, empty);
 }
 
 TEST_CASE("Aggressive move up - many own, 0 enemy")
 {
-    checkLegal(0b0110'1010'0100'0110, empty, 0b0000'0000'0100'0000,
-               0b0110'1110'0000'0110, empty);
+    checkLegal<Direction::Up>(0b0110'1010'0100'0110, empty,
+                              0b0000'0000'0100'0000,
+                              0b0110'1110'0000'0110, empty);
 }
 
 TEST_CASE("Aggressive move up - 1 own, pushing 1 enemy")
 {
-    checkLegal(0b0000'0000'0000'1000, 0b0000'0000'1000'0000,
-               0b0000'0000'0000'1000, 0b0000'0000'1000'0000,
-               0b0000'1000'0000'0000);
+    checkLegal<Direction::Up>(0b0000'0000'0000'1000, 0b0000'0000'1000'0000,
+                              0b0000'0000'0000'1000, 0b0000'0000'1000'0000,
+                              0b0000'1000'0000'0000);
 }
 
 TEST_CASE("Aggressive move up - many own, pushing 1 enemy of many")
 {
-    checkLegal(0b0110'1000'0100'0110, 0b0000'0000'0010'1001,
-               0b0000'0000'0000'0010, 0b0110'1000'0110'0100,
-               0b0000'0010'0000'1001);
+    checkLegal<Direction::Up>(0b0110'1000'0100'0110, 0b0000'0000'0010'1001,
+                              0b0000'0000'0000'0010, 0b0110'1000'0110'0100,
+                              0b0000'0010'0000'1001);
 }
 
 TEST_CASE("Illegal aggressive move up - on edge")
@@ -78,5 +81,16 @@ TEST_CASE("Illegal aggressive move up - pushing own stone")
     checkIllegal<Direction::Up>(0b0000'0010'0010'0000,
                                 empty,
                                 0b0000'0000'0010'0000);
+}
+#pragma endregion
+
+#pragma region DownLeft
+TEST_CASE("Aggressive move down left - 1 own, 1 enemy")
+{
+    checkLegal<Direction::DownLeft>(0b0000'0010'0000'0000,
+                                    0b0000'0000'0100'0000,
+                                    0b0000'0010'0000'0000,
+                                    0b0000'0000'0100'0000,
+                                    0b0000'0000'0000'1000);
 }
 #pragma endregion
