@@ -8,8 +8,8 @@ void checkLegal(const Board own, const Board enemy, const Board stone,
     const TwoBoards result = applyStoneAggressiveMove<Direction::Up>(
         own, enemy, stone
     );
-    constexpr Board ownResult = result >> 16;
-    constexpr Board enemyResult = static_cast<Board>(result);
+    const Board ownResult = result >> 16;
+    const Board enemyResult = static_cast<Board>(result);
     CHECK(ownExpected == ownResult);
     CHECK(enemyExpected == enemyResult);
 }
