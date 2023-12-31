@@ -5,21 +5,24 @@
 #include <bitset>
 #include <cassert>
 
-std::string toBitString(Board board) {
-    std::bitset<16> x(board);
+std::string toBitString(const Board board)
+{
+    const std::bitset<16> x(board);
     return x.to_string();
 }
 
-void printBits(Board board)
+void printBits(const Board board)
 {
     std::cout << toBitString(board) << std::endl;
 }
 
-void print(Board board)
+void print(const Board board)
 {
     Board cell = 0b1000'0000'0000'0000;
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
             if (cell & board)
                 std::cout << 'o';
             else
@@ -31,7 +34,7 @@ void print(Board board)
 }
 
 // Own homeboards are bottom 2 boards, enemy homeboards are top 2 boards
-void print(State state)
+void print(const State state)
 {
     printTwoBoards(state.own[0], state.own[1],
                    state.enemy[0], state.enemy[1]);
@@ -41,21 +44,23 @@ void print(State state)
     std::cout << std::endl;
 }
 
-void printTwoBoards(TwoBoards boards)
+void printTwoBoards(const TwoBoards boards)
 {
-    Board first = boards >> 16;
-    Board second = (Board) boards;
+    const Board first = boards >> 16;
+    const Board second = (Board)boards;
     printTwoBoards(first, second, 0, 0);
 }
 
-void printTwoBoards(Board ownLeft, Board ownRight,
-                    Board enemyLeft, Board enemyRight)
+void printTwoBoards(const Board ownLeft, const Board ownRight,
+                    const Board enemyLeft, const Board enemyRight)
 {
     Board leftCell = 0b1000'0000'0000'0000;
     Board rightCell = 0b1000'0000'0000'0000;
 
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
             assert(!((leftCell & ownLeft) && (leftCell & enemyLeft)));
             if (leftCell & ownLeft)
                 std::cout << 'o';
@@ -68,7 +73,8 @@ void printTwoBoards(Board ownLeft, Board ownRight,
 
         std::cout << " | ";
 
-        for (int j = 0; j < 4; ++j) {
+        for (int j = 0; j < 4; ++j)
+        {
             assert(!((rightCell & ownRight) && (rightCell & enemyRight)));
             if (rightCell & ownRight)
                 std::cout << 'o';

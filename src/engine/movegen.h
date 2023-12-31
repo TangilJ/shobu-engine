@@ -4,18 +4,18 @@
 #include "types.h"
 
 void addPassiveMoves(BoardType passiveBoard,
-                     const State &state,
-                     States &states);
+                     const State& state,
+                     States& states);
 
-TwoBoards applyStoneAggressiveMove(Board ownAggrStones,
-                                   Board enemyAggrStones,
+TwoBoards applyStoneAggressiveMove(Board ownStones,
+                                   Board enemyStones,
                                    Board stone);
 
 void addBothMoves(State state,
                   BoardType aggressiveBoard,
                   BoardType passiveBoard,
-                  States &states);
+                  States& states);
 
-void addMoves(State state, States &states);
+void addMoves(State state, States& states);
 
 #endif //SHOBU_MOVEGEN_H

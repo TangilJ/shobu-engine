@@ -14,6 +14,7 @@ void print(State board);
 
 void printTwoBoards(TwoBoards boards);
 
-void printTwoBoards(Board ownLeft, Board ownRight, Board enemyLeft, Board enemyRight);
+void printTwoBoards(Board ownLeft, Board ownRight,
+                    Board enemyLeft, Board enemyRight);
 
 #endif //SHOBU_PRINT_H

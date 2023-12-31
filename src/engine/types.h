@@ -16,7 +16,8 @@ using Board = uint16_t;
 // TODO: Could use a wrapper if there is no performance degradation
 using TwoBoards = uint32_t;
 
-enum BoardType : int {
+enum BoardType : int
+{
     TopLeft = 0,
     TopRight = 1,
     BottomLeft = 2,
@@ -26,30 +27,34 @@ enum BoardType : int {
 using BoardArray = std::array<Board, 4>;
 
 // Index 0 = top left board, 1 = top right, 2 = bottom left, 3 = bottom right 
-struct State {
+struct State
+{
     BoardArray own;
     BoardArray enemy;
 };
 
 
-struct States {
+struct States
+{
 private:
     static constexpr int arrayMaxSize = 100;
     unsigned short size = 0;
     std::array<State, arrayMaxSize> array{};
+
 public:
-    State operator[](int i)
+    [[nodiscard]] State operator[](const int i) const
     {
         return array[i];
     }
 
-    void add(State &state)
+    void add(State& state)
     {
         array[size] = state;
         size++;
     }
-    
-    int length() {
+
+    [[nodiscard]] int length() const
+    {
         return size;
     }
 };
