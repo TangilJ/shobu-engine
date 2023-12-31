@@ -31,6 +31,7 @@ void print(const Board board)
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
 }
 
 // Own homeboards are bottom 2 boards, enemy homeboards are top 2 boards

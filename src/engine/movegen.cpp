@@ -8,13 +8,13 @@ constexpr Board move(const Board board)
 {
     // @formatter:off
     return Direction == Direction::Up        ? board << 4
-         : Direction == Direction::UpRight   ? board << 3
-         : Direction == Direction::Right     ? board >> 1
-         : Direction == Direction::DownRight ? board >> 5
+         : Direction == Direction::UpRight   ? board << 3 & ~left
+         : Direction == Direction::Right     ? board >> 1 & ~left
+         : Direction == Direction::DownRight ? board >> 5 & ~left
          : Direction == Direction::Down      ? board >> 4
-         : Direction == Direction::DownLeft  ? board >> 3
-         : Direction == Direction::Left      ? board << 1
-         : Direction == Direction::UpLeft    ? board << 5
+         : Direction == Direction::DownLeft  ? board >> 3 & ~right
+         : Direction == Direction::Left      ? board << 1 & ~right
+         : Direction == Direction::UpLeft    ? board << 5 & ~right
          : 0;
     // @formatter:on
 }
@@ -51,12 +51,13 @@ void addPassiveMoves(const BoardType passiveBoard,
         const Board currentStone = stonesLeft & -stonesLeft;
         stonesLeft ^= currentStone;
 
-        // Passive move not allowed if there is stone above        
+        // Passive move not allowed if it would push another stone        
         const Board moveOne = move<Direction>(currentStone);
         const bool blocked = (ownStones | enemyStones) & moveOne;
 
-        // Passive move not allowed if it would push self off board
-        const bool onEdge = edge<Direction>() & currentStone;
+        // Passive move not allowed if it would push self off board.
+        // move() returns 0 if pushing itself off so moveOne == 0 if on edge
+        const bool onEdge = !moveOne;
 
         if (blocked || onEdge)
             continue;
@@ -83,14 +84,15 @@ TwoBoards applyStoneAggressiveMove(const Board ownStones,
     const Board moveTwo = move<Direction>(moveOne);
     const Board blockPath = moveOne | moveTwo;
     const bool stonesInBlockPath =
-        ((ownStones | enemyStones) & blockPath)
-        == blockPath;
+        moveTwo != empty
+        && ((ownStones | enemyStones) & blockPath) == blockPath;
 
     // Aggressive move not allowed when pushing own stone
     const bool pushingOwnStone = ownStones & moveOne;
 
     // Aggressive move not allowed if it would push self off board
-    const bool onEdge = edge<Direction>() & stone;
+    // move() returns 0 if pushing itself off so moveOne == 0 if on edge
+    const bool onEdge = !moveOne;
 
     if (stonesInBlockPath || pushingOwnStone || onEdge)
         return 0;
@@ -101,7 +103,7 @@ TwoBoards applyStoneAggressiveMove(const Board ownStones,
     const Board ownStonesMoved = ownStones ^ stone | moveOne;
 
     // Enemy stone is pushed up if it exists. If there is an enemy stone one
-    // square above, duplicate it up and remove its previous position
+    // square in next square, duplicate it up and remove its previous position
     const Board enemyStonesMoved =
         move<Direction>(moveOne & enemyStones)
         | enemyStones & ~moveOne;

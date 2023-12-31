@@ -94,3 +94,27 @@ TEST_CASE("Aggressive move down left - 1 own, 1 enemy")
                                     0b0000'0000'0000'1000);
 }
 #pragma endregion
+
+
+#pragma region Down
+TEST_CASE("Aggressive move down - 1 own, 1 enemy, pushing enemy off board")
+{
+    checkLegal<Direction::Down>(0b0000'0000'0010'0000,
+                                    0b0000'0000'0000'0010,
+                                    0b0000'0000'0010'0000,
+                                    0b0000'0000'0000'0010,
+                                    empty);
+}
+#pragma endregion
+
+
+#pragma region Right
+TEST_CASE("Aggressive move right - 1 own, 1 enemy, pushing enemy off board")
+{
+    checkLegal<Direction::Right>(0b0000'0000'0010'0000,
+                                    0b0000'0000'0001'0000,
+                                    0b0000'0000'0010'0000,
+                                    0b0000'0000'0001'0000,
+                                    empty);
+}
+#pragma endregion
