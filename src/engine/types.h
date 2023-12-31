@@ -24,6 +24,18 @@ enum BoardType : int
     BottomRight = 3
 };
 
+enum class Direction
+{
+    Up,
+    UpRight,
+    Right,
+    DownRight,
+    Down,
+    DownLeft,
+    Left,
+    UpLeft
+};
+
 using BoardArray = std::array<Board, 4>;
 
 // Index 0 = top left board, 1 = top right, 2 = bottom left, 3 = bottom right 

@@ -22,7 +22,7 @@ TEST_CASE("Passive move up - one stone")
     };
     State state = {own, enemy};
 
-    addPassiveMoves(TopLeft, state, states);
+    addPassiveMoves<Direction::Up>(TopLeft, state, states);
 
     const BoardArray expectedOwn = {
         0b0000'0000'1000'0000,
@@ -51,7 +51,7 @@ TEST_CASE("Passive move up - four stones")
     };
     State state = {own, enemy};
 
-    addPassiveMoves(TopLeft, state, states);
+    addPassiveMoves<Direction::Up>(TopLeft, state, states);
 
     const BoardArray expectedOwn0 = {
         0b0000'0001'0110'1000,
@@ -105,7 +105,7 @@ TEST_CASE("Passive move up - surrounded by enemy stones")
     };
     State state = {own, enemy};
 
-    addPassiveMoves(TopRight, state, states);
+    addPassiveMoves<Direction::Up>(TopRight, state, states);
 
     const BoardArray expectedOwn = {
         0b0000'0000'0000'0000,
@@ -135,7 +135,7 @@ TEST_CASE("Illegal passive move up - on edge")
     };
     State state = {own, enemy};
 
-    addPassiveMoves(BottomLeft, state, states);
+    addPassiveMoves<Direction::Up>(BottomLeft, state, states);
 
     CHECK(0 == states.length());
 }
@@ -157,7 +157,7 @@ TEST_CASE("Illegal passive move up - pushing enemy stone")
     };
     State state = {own, enemy};
 
-    addPassiveMoves(BottomRight, state, states);
+    addPassiveMoves<Direction::Up>(BottomRight, state, states);
 
     CHECK(0 == states.length());
 }
@@ -179,7 +179,7 @@ TEST_CASE("Passive move up - one illegal pushing own stone, one fine")
     };
     State state = {own, enemy};
 
-    addPassiveMoves(BottomRight, state, states);
+    addPassiveMoves<Direction::Up>(BottomRight, state, states);
 
     CHECK(1 == states.length());
 }
