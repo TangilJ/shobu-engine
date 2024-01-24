@@ -12,7 +12,7 @@ void print(Board board);
 
 void print(State board);
 
-void printTwoBoards(TwoBoards boards);
+void printTwoBoards(BoardPair boards);
 
 void printTwoBoards(Board ownLeft, Board ownRight,
                     Board enemyLeft, Board enemyRight);

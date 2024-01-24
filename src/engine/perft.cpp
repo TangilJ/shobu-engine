@@ -1,8 +1,7 @@
 #include "perft.h"
 
 #include <chrono>
-#include <cstdint>
-#include <ctime>
+#include <cstdio>
 
 #include "consts.h"
 #include "movegen.h"
@@ -20,9 +19,15 @@ uint64_t perft(const State state, const int depth)
     uint64_t total = 0;
     for (int i = 0; i < states.length(); ++i)
     {
-        State reversedPlayers = state;
-        reversedPlayers.own = state.enemy;
-        reversedPlayers.enemy = state.own;
+        State reversedPlayers{};
+        reversedPlayers.own = {
+            state.enemy[3], state.enemy[2],
+            state.enemy[1], state.enemy[0]
+        };
+        reversedPlayers.enemy = {
+            state.own[3], state.own[2],
+            state.own[1], state.own[0]
+        };
         total += perft(reversedPlayers, depth - 1);
     }
 
@@ -31,7 +36,7 @@ uint64_t perft(const State state, const int depth)
 
 void timeIncreasingPerft(const int depth)
 {
-    for (int currentDepth = 1; currentDepth < depth + 1; ++currentDepth)
+    for (int currentDepth = 0; currentDepth < depth + 1; ++currentDepth)
     {
         auto start = std::chrono::steady_clock::now();
         const auto total = perft(startState, currentDepth);

@@ -45,11 +45,9 @@ void print(const State state)
     std::cout << std::endl;
 }
 
-void printTwoBoards(const TwoBoards boards)
+void printTwoBoards(const BoardPair boards)
 {
-    const Board first = boards >> 16;
-    const Board second = static_cast<Board>(boards);
-    printTwoBoards(first, second, 0, 0);
+    printTwoBoards(boards.own, boards.enemy, 0, 0);
 }
 
 void printTwoBoards(const Board ownLeft, const Board ownRight,

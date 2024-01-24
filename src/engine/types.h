@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <array>
+#include <cassert>
 
 // 4x4 board
 // Rightmost bit is top left of board
@@ -13,19 +14,29 @@
 // ..o.
 using Board = uint16_t;
 
-// TODO: Could use a wrapper if there is no performance degradation
-using TwoBoards = uint32_t;
+struct BoardPair {
+    Board own;
+    Board enemy;
 
-enum BoardType : int
-{
+    static BoardPair empty()
+    {
+        return {0, 0};
+    }
+
+    bool isEmpty() const
+    {
+        return own == 0;
+    }
+};
+
+enum BoardType : int {
     TopLeft = 0,
     TopRight = 1,
     BottomLeft = 2,
     BottomRight = 3
 };
 
-enum class Direction
-{
+enum class Direction {
     Up,
     UpRight,
     Right,
@@ -38,16 +49,16 @@ enum class Direction
 
 using BoardArray = std::array<Board, 4>;
 
-// Index 0 = top left board, 1 = top right, 2 = bottom left, 3 = bottom right 
-struct State
-{
+// Index 0 = top left,    1 = top right,
+//       2 = bottom left, 3 = bottom right 
+// TODO: Use BoardPair for this
+struct State {
     BoardArray own;
     BoardArray enemy;
 };
 
 
-struct States
-{
+struct States {
 private:
     static constexpr int arrayMaxSize = 300;
     unsigned short size = 0;
@@ -59,8 +70,9 @@ public:
         return array[i];
     }
 
-    void add(State& state)
+    void add(State &state)
     {
+        assert(size <= arrayMaxSize);
         array[size] = state;
         size++;
     }

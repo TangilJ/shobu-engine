@@ -5,13 +5,15 @@
 
 template <Direction>
 void addPassiveMoves(BoardType passiveBoard,
-                     const State& state,
-                     States& states);
+                     BoardType aggressiveBoard,
+                     const State &aggr1,
+                     const State &aggr2,
+                     States &states);
 
 template <Direction Direction>
-TwoBoards applyStoneAggressiveMove(Board ownStones,
-                                   Board enemyStones,
-                                   Board stone);
+BoardPair aggressiveMove(Board ownStones,
+                         Board enemyStones,
+                         Board stone);
 
 template <Direction Direction>
 void addBothMoves(State state,
