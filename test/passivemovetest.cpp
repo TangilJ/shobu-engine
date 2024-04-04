@@ -1,233 +1,305 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-
 #include <doctest/doctest.h>
+#include <algorithm>
 #include "movegen.h"
 #include "types.h"
 #include "consts.h"
 
-constexpr BoardArray emptyArray = {empty, empty, empty, empty};
-
-template <Direction Direction>
-void checkLegalOneMove(const BoardType board, const BoardArray own,
-                       const BoardArray enemy, const BoardArray expectedOwn)
-{
-    States states;
-    const State state = {own, enemy};
-
-    addPassiveMoves<Direction>(board, state, states);
-
-    CHECK(1 == states.length());
-    CHECK(expectedOwn == states[0].own);
-}
-
-template <Direction Direction>
-void checkIllegal(const BoardType board, const BoardArray own,
-                  const BoardArray enemy, const int legalStates)
-{
-    States states;
-    const State state = {own, enemy};
-
-    addPassiveMoves<Direction>(board, state, states);
-    CHECK(legalStates == states.length());
-}
 
 #pragma region Up
+
 TEST_CASE("Passive move up - one stone")
 {
-    constexpr BoardArray own = {0b0000'0000'0000'1000, empty, empty, empty};
-    constexpr BoardArray expectedOwn = {
-        0b0000'0000'1000'0000, empty, empty, empty
-    };
-    checkLegalOneMove<Direction::Up>(TopLeft, own, emptyArray, expectedOwn);
+    CHECK(
+            passiveMoveAllowed(
+                    0b0000'0000'1000'0000,
+                    0b0000'0000'0000'1000,
+                    empty
+            )
+    );
+}
+
+static void checkContains(std::vector<Board> &moveOnes, Board b)
+{
+    CHECK((std::find(moveOnes.begin(), moveOnes.end(), b) != moveOnes.end()));
+}
+
+template<Direction Direction>
+void checkPassiveMoves(Board own,
+                       Board enemy,
+                       const std::vector<Board> &expectedOnes,
+                       const std::vector<Board> &expectedTwos)
+{
+    std::vector<Board> moveOnes;
+    std::vector<Board> moveTwos;
+    generatePassiveMoves<Direction>(
+            own,
+            enemy,
+            moveOnes,
+            moveTwos
+    );
+
+    CHECK((expectedOnes.size() == moveOnes.size()));
+    for (const Board &b: expectedOnes)
+        checkContains(moveOnes, b);
+
+
+    CHECK((expectedTwos.size() == moveTwos.size()));
+    for (const Board &b: expectedTwos)
+        checkContains(moveTwos, b);
 }
 
 TEST_CASE("Passive move up - four stones")
 {
-    States states;
-    constexpr BoardArray own = {0b0000'0001'0010'1100, empty, empty, empty};
-
-    State state = {own, emptyArray};
-
-    addPassiveMoves<Direction::Up>(TopLeft, state, states);
-
-    constexpr BoardArray expectedOwn0 = {
-        0b0000'0001'0110'1000, empty, empty, empty
-    };
-
-    constexpr BoardArray expectedOwn1 = {
-        0b0000'0001'1010'0100, empty, empty, empty
-    };
-
-    constexpr BoardArray expectedOwn2 = {
-        0b0000'0011'0000'1100, empty, empty, empty
-    };
-
-    constexpr BoardArray expectedOwn3 = {
-        0b0001'0000'0010'1100, empty, empty, empty
-    };
-
-    CHECK(4 == states.length());
-    CHECK(expectedOwn0 == states[0].own);
-    CHECK(expectedOwn1 == states[1].own);
-    CHECK(expectedOwn2 == states[2].own);
-    CHECK(expectedOwn3 == states[3].own);
+    checkPassiveMoves<Direction::Up>(
+            0b0000'0001'0010'1100,
+            empty,
+            {
+                    0b0000'0001'0110'1000,
+                    0b0000'0001'1010'0100,
+                    0b0000'0011'0000'1100,
+                    0b0001'0000'0010'1100
+            },
+            {
+                    0b0010'0001'0000'1100,
+                    0b0000'1001'0010'0100,
+                    0b0000'0101'0010'1000
+            }
+    );
 }
 
 TEST_CASE("Passive move up - surrounded by enemy stones")
 {
-    constexpr BoardArray own = {empty, 0b0000'0000'0010'0000, empty, empty};
-    constexpr BoardArray enemy = {empty, 0b0000'0101'0101'1111, empty, empty};
-    constexpr BoardArray expectedOwn = {
-        empty, 0b0000'0010'0000'0000, empty, empty
-    };
-    checkLegalOneMove<Direction::Up>(TopRight, own, enemy, expectedOwn);
+    checkPassiveMoves<Direction::Up>(
+            0b0000'0000'0010'0000,
+            0b0000'0101'0101'1111,
+            {0b0000'0010'0000'0000},
+            {0b0010'0000'0000'0000}
+    );
 }
 
 TEST_CASE("Illegal passive move up - on edge")
 {
-    constexpr BoardArray own = {empty, empty, 0b0010'0000'0000'0000, empty};
-    checkIllegal<Direction::Up>(BottomLeft, own, emptyArray, 0);
+    checkPassiveMoves<Direction::Up>(
+            0b0010'0000'0000'0000,
+            empty,
+            {},
+            {}
+    );
 }
 
 TEST_CASE("Illegal passive move up - pushing enemy stone")
 {
-    constexpr BoardArray own = {empty, empty, empty, 0b0000'0000'0100'0000};
-    constexpr BoardArray enemy = {empty, empty, empty, 0b0000'0100'0000'0000};
-    checkIllegal<Direction::Up>(BottomRight, own, enemy, 0);
+    checkPassiveMoves<Direction::Up>(
+            0b0000'0000'0100'0000,
+            0b0000'0100'0000'0000,
+            {},
+            {}
+    );
 }
 
 TEST_CASE("Passive move up - one illegal pushing own stone, one fine")
 {
-    constexpr BoardArray own = {empty, empty, empty, 0b0000'0100'0100'0000};
-    checkIllegal<Direction::Up>(BottomRight, own, emptyArray, 1);
+    checkPassiveMoves<Direction::Up>(
+            0b0000'0100'0100'0000,
+            empty,
+            {0b0100'0000'0100'0000},
+            {}
+    );
 }
+
 #pragma endregion
 
 
 #pragma region Down
+
 TEST_CASE("Passive move down - one stone")
 {
-    constexpr BoardArray own = {0b0000'0000'1000'0000, empty, empty, empty};
-    constexpr BoardArray expectedOwn = {
-        0b0000'0000'0000'1000, empty, empty, empty
-    };
-    checkLegalOneMove<Direction::Down>(TopLeft, own, emptyArray, expectedOwn);
+    checkPassiveMoves<Direction::Down>(
+            0b0000'0000'1000'0000,
+            empty,
+            {0b0000'0000'0000'1000},
+            {}
+    );
 }
 
 TEST_CASE("Illegal passive move down - on edge")
 {
-    constexpr BoardArray own = {empty, empty, 0b0010'0000'0000'0000, empty};
-    checkIllegal<Direction::Down>(BottomRight, own, emptyArray, 0);
+    checkPassiveMoves<Direction::Down>(
+            0b0000'0000'0000'0010,
+            empty,
+            {},
+            {}
+    );
 }
+
 #pragma endregion
 
 
 #pragma region Left
+
 TEST_CASE("Passive move left - one stone")
 {
-    constexpr BoardArray own = {0b0000'0010'0000'0000, empty, empty, empty};
-    constexpr BoardArray expectedOwn = {
-        0b0000'0100'0000'0000, empty, empty, empty
-    };
-    checkLegalOneMove<Direction::Left>(TopLeft, own, emptyArray, expectedOwn);
+    checkPassiveMoves<Direction::Left>(
+            0b0000'0010'0000'0000,
+            empty,
+            {0b0000'0100'0000'0000},
+            {0b0000'1000'0000'0000}
+    );
 }
 
 TEST_CASE("Illegal passive move left - on edge")
 {
-    constexpr BoardArray own = {empty, empty, 0b0000'0000'1000'0000, empty};
-    checkIllegal<Direction::Left>(BottomRight, own, emptyArray, 0);
+    checkPassiveMoves<Direction::Left>(
+            0b0000'0000'1000'0000,
+            empty,
+            {},
+            {}
+    );
 }
+
 #pragma endregion
 
 
 #pragma region Right
-TEST_CASE("Passive move right - one stone")
+
+TEST_CASE("Passive move right - one stone two moves")
 {
-    constexpr BoardArray own = {0b0000'0000'1000'0000, empty, empty, empty};
-    constexpr BoardArray expectedOwn = {
-        0b0000'0000'0100'0000, empty, empty, empty
-    };
-    checkLegalOneMove<Direction::Right>(TopLeft, own, emptyArray, expectedOwn);
+    checkPassiveMoves<Direction::Right>(
+            0b0000'0000'1000'0000,
+            empty,
+            {0b0000'0000'0100'0000},
+            {0b0000'0000'0010'0000}
+    );
+}
+
+TEST_CASE("Passive move right - one stone one move")
+{
+    checkPassiveMoves<Direction::Right>(
+            0b0000'0000'0010'0000,
+            empty,
+            {0b0000'0000'0001'0000},
+            {}
+    );
 }
 
 TEST_CASE("Illegal passive move down - on edge")
 {
-    constexpr BoardArray own = {empty, empty, 0b0000'0000'0001'0000, empty};
-    checkIllegal<Direction::Right>(BottomRight, own, emptyArray, 0);
+    checkPassiveMoves<Direction::Right>(
+            0b0000'0000'0001'0000,
+            empty,
+            {},
+            {}
+    );
 }
+
 #pragma endregion
 
 
 #pragma region UpRight
-TEST_CASE("Passive move up right - one stone")
+
+TEST_CASE("Passive move up right - one stone two moves")
 {
-    constexpr BoardArray own = {0b0000'0000'1000'0000, empty, empty, empty};
-    constexpr BoardArray expectedOwn = {
-        0b0000'0100'0000'0000, empty, empty, empty
-    };
-    checkLegalOneMove<
-        Direction::UpRight>(TopLeft, own, emptyArray, expectedOwn);
+    checkPassiveMoves<Direction::UpRight>(
+            0b0000'0000'1000'0000,
+            empty,
+            {0b0000'0100'0000'0000},
+            {0b0010'0000'0000'0000}
+    );
+}
+
+TEST_CASE("Passive move up right - one stone one move")
+{
+    checkPassiveMoves<Direction::UpRight>(
+            0b0000'0000'0010'0000,
+            empty,
+            {0b0000'0001'0000'0000},
+            {}
+    );
 }
 
 TEST_CASE("Illegal passive move up right - on edge")
 {
-    constexpr BoardArray own = {empty, empty, 0b0001'0000'0000'0000, empty};
-    checkIllegal<Direction::UpRight>(BottomRight, own, emptyArray, 0);
+    checkPassiveMoves<Direction::UpRight>(
+            0b0001'0000'0000'0000,
+            empty,
+            {},
+            {}
+    );
 }
+
 #pragma endregion
 
 
 #pragma region DownRight
+
 TEST_CASE("Passive move down right - one stone")
 {
-    constexpr BoardArray own = {0b0000'0010'0000'0000, empty, empty, empty};
-    constexpr BoardArray expectedOwn = {
-        0b0000'0000'0001'0000, empty, empty, empty
-    };
-    checkLegalOneMove<Direction::DownRight>(TopLeft, own, emptyArray,
-                                            expectedOwn);
+    checkPassiveMoves<Direction::DownRight>(
+            0b0000'0010'0000'0000,
+            empty,
+            {0b0000'0000'0001'0000},
+            {}
+    );
 }
 
 TEST_CASE("Illegal passive move down right - on edge")
 {
-    constexpr BoardArray own = {empty, empty, 0b0000'0000'0000'0001, empty};
-    checkIllegal<Direction::DownRight>(BottomRight, own, emptyArray, 0);
+    checkPassiveMoves<Direction::DownRight>(
+            0b0000'0000'0000'0001,
+            empty,
+            {},
+            {}
+    );
 }
+
 #pragma endregion
 
 
 #pragma region DownLeft
-TEST_CASE("Passive move down right - one stone")
+
+TEST_CASE("Passive move down left - one stone")
 {
-    constexpr BoardArray own = {0b0010'0000'0000'0000, empty, empty, empty};
-    constexpr BoardArray expectedOwn = {
-        0b0000'0100'0000'0000, empty, empty, empty
-    };
-    checkLegalOneMove<Direction::DownLeft>(TopLeft, own, emptyArray,
-                                           expectedOwn);
+    checkPassiveMoves<Direction::DownLeft>(
+            0b0010'0000'0000'0000,
+            empty,
+            {0b0000'0100'0000'0000},
+            {0b0000'0000'1000'0000}
+    );
 }
 
-TEST_CASE("Illegal passive move down right - on edge")
+TEST_CASE("Illegal passive move down left - on edge")
 {
-    constexpr BoardArray own = {empty, empty, 0b0000'0000'0000'1000, empty};
-    checkIllegal<Direction::DownLeft>(BottomRight, own, emptyArray, 0);
+    checkPassiveMoves<Direction::DownLeft>(
+            0b0000'0000'0000'0001,
+            empty,
+            {},
+            {}
+    );
 }
+
 #pragma endregion
 
 
 #pragma region UpLeft
-TEST_CASE("Passive move down right - one stone")
+
+TEST_CASE("Passive move up left - one stone")
 {
-    constexpr BoardArray own = {0b0000'0000'0100'0000, empty, empty, empty};
-    constexpr BoardArray expectedOwn = {
-        0b0000'1000'0000'0000, empty, empty, empty
-    };
-    checkLegalOneMove<Direction::UpLeft>(TopLeft, own, emptyArray, expectedOwn);
+    checkPassiveMoves<Direction::UpLeft>(
+            0b0000'0000'0100'0000,
+            empty,
+            {0b0000'1000'0000'0000},
+            {}
+    );
 }
 
-TEST_CASE("Illegal passive move down right - on edge")
+TEST_CASE("Illegal passive move up left - on edge")
 {
-    constexpr BoardArray own = {empty, empty, 0b1000'0000'0000'0000, empty};
-    checkIllegal<Direction::UpLeft>(BottomRight, own, emptyArray, 0);
+    checkPassiveMoves<Direction::UpLeft>(
+            0b1000'0000'0000'0000,
+            empty,
+            {},
+            {}
+    );
 }
+
 #pragma endregion

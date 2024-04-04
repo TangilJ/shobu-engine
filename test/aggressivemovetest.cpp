@@ -1,3 +1,5 @@
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+
 #include <doctest/doctest.h>
 #include "movegen.h"
 #include "consts.h"
@@ -6,23 +8,22 @@ template <Direction Direction>
 void checkLegal(const Board own, const Board enemy, const Board stone,
                 const Board ownExpected, const Board enemyExpected)
 {
-    const TwoBoards result = applyStoneAggressiveMove<Direction>(
+    const BoardPair result = aggressiveMove<Direction>(
         own, enemy, stone
     );
-    const Board ownResult = result >> 16;
-    const Board enemyResult = static_cast<Board>(result);
-    CHECK(ownExpected == ownResult);
-    CHECK(enemyExpected == enemyResult);
+    CHECK((ownExpected == result.own));
+    CHECK((enemyExpected == result.enemy));
 }
 
 
 template <Direction Direction>
 void checkIllegal(const Board own, const Board enemy, const Board stone)
 {
-    const TwoBoards result = applyStoneAggressiveMove<Direction>(
+    const BoardPair result = aggressiveMove<Direction>(
         own, enemy, stone
     );
-    CHECK(0 == result);
+    CHECK((0 == result.own));
+    CHECK((0 == result.enemy));
 }
 
 #pragma region Up
