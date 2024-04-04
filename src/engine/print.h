@@ -4,17 +4,17 @@
 #include "types.h"
 #include <string>
 
-std::string toBitString(Board board);
+std::string toBitString(Bitboard board);
 
-void printBits(Board board);
+void printBits(Bitboard board);
 
-void print(Board board);
+void print(Bitboard board);
 
 void print(State board);
 
-void printTwoBoards(BoardPair boards);
+void printTwoBoards(Quarterboard boards);
 
-void printTwoBoards(Board ownLeft, Board ownRight,
-                    Board enemyLeft, Board enemyRight);
+void printTwoBoards(Bitboard ownLeft, Bitboard ownRight,
+                    Bitboard enemyLeft, Bitboard enemyRight);
 
 #endif //SHOBU_PRINT_H

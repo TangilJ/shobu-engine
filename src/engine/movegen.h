@@ -4,28 +4,28 @@
 #include "types.h"
 
 template<Direction Direction>
-constexpr Board move(Board board);
+constexpr Bitboard move(Bitboard board);
 
-bool passiveMoveAllowed(Board target,
-                        Board ownStones,
-                        Board enemyStones);
-
-template<Direction Direction>
-BoardPair aggressiveMove(Board ownStones,
-                         Board enemyStones,
-                         Board stone);
+bool passiveMoveAllowed(Bitboard target,
+                        Bitboard ownStones,
+                        Bitboard enemyStones);
 
 template<Direction Direction>
-void generatePassiveMoves(Board own,
-                          Board enemy,
-                          Vec<Board, 4> &moveOnes,
-                          Vec<Board, 4> &moveTwos);
+Quarterboard aggressiveMove(Bitboard ownStones,
+                            Bitboard enemyStones,
+                            Bitboard stone);
 
 template<Direction Direction>
-void generateAggressiveMoves(Board own,
-                             Board enemy,
-                             Vec<BoardPair, 4> &moveOnes,
-                             Vec<BoardPair, 4> &moveTwos);
+void generatePassiveMoves(Bitboard own,
+                          Bitboard enemy,
+                          Vec<Bitboard, 4> &moveOnes,
+                          Vec<Bitboard, 4> &moveTwos);
+
+template<Direction Direction>
+void generateAggressiveMoves(Bitboard own,
+                             Bitboard enemy,
+                             Vec<Quarterboard, 4> &moveOnes,
+                             Vec<Quarterboard, 4> &moveTwos);
 
 template<Direction Direction>
 void generateMovesOnBoard(BoardType passiveBoard,

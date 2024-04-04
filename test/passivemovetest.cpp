@@ -18,19 +18,19 @@ TEST_CASE("Passive move up - one stone")
     );
 }
 
-static void checkContains(std::vector<Board> &moveOnes, Board b)
+static void checkContains(std::vector<Bitboard> &moveOnes, Bitboard b)
 {
     CHECK((std::find(moveOnes.begin(), moveOnes.end(), b) != moveOnes.end()));
 }
 
 template<Direction Direction>
-void checkPassiveMoves(Board own,
-                       Board enemy,
-                       const std::vector<Board> &expectedOnes,
-                       const std::vector<Board> &expectedTwos)
+void checkPassiveMoves(Bitboard own,
+                       Bitboard enemy,
+                       const std::vector<Bitboard> &expectedOnes,
+                       const std::vector<Bitboard> &expectedTwos)
 {
-    std::vector<Board> moveOnes;
-    std::vector<Board> moveTwos;
+    std::vector<Bitboard> moveOnes;
+    std::vector<Bitboard> moveTwos;
     generatePassiveMoves<Direction>(
             own,
             enemy,
@@ -39,12 +39,12 @@ void checkPassiveMoves(Board own,
     );
 
     CHECK((expectedOnes.size() == moveOnes.size()));
-    for (const Board &b: expectedOnes)
+    for (const Bitboard &b: expectedOnes)
         checkContains(moveOnes, b);
 
 
     CHECK((expectedTwos.size() == moveTwos.size()));
-    for (const Board &b: expectedTwos)
+    for (const Bitboard &b: expectedTwos)
         checkContains(moveTwos, b);
 }
 

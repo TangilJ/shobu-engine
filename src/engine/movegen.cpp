@@ -4,7 +4,7 @@
 #include "print.h"
 
 template<Direction Direction>
-constexpr Board move(const Board board)
+constexpr Bitboard move(const Bitboard board)
 {
     // @formatter:off
     return Direction == Direction::Up        ? board << 4
@@ -20,7 +20,8 @@ constexpr Board move(const Board board)
 }
 
 // Is the target allowed to be where it is, given the current quarterboard?
-bool passiveMoveAllowed(Board target, Board ownStones, Board enemyStones)
+bool
+passiveMoveAllowed(Bitboard target, Bitboard ownStones, Bitboard enemyStones)
 {
     // Passive move not allowed if it would push another stone
     const bool blocked = (ownStones | enemyStones) & target;
@@ -34,17 +35,17 @@ bool passiveMoveAllowed(Board target, Board ownStones, Board enemyStones)
 
 // Returns 0 if aggressive move not allowed
 template<Direction Direction>
-BoardPair aggressiveMove(const Board ownStones,
-                         const Board enemyStones,
-                         const Board stone)
+Quarterboard aggressiveMove(const Bitboard ownStones,
+                            const Bitboard enemyStones,
+                            const Bitboard stone)
 {
     // TODO: Split into 2 smaller functions
 
 #pragma region Move restrictions
     // Aggressive move not allowed when pushing more than 1 stone
-    const Board moveOne = move<Direction>(stone);
-    const Board moveTwo = move<Direction>(moveOne);
-    const Board blockPath = moveOne | moveTwo;
+    const Bitboard moveOne = move<Direction>(stone);
+    const Bitboard moveTwo = move<Direction>(moveOne);
+    const Bitboard blockPath = moveOne | moveTwo;
     const bool stonesInBlockPath =
             moveTwo != empty
             && ((ownStones | enemyStones) & blockPath) == blockPath;
@@ -57,81 +58,81 @@ BoardPair aggressiveMove(const Board ownStones,
     const bool onEdge = !moveOne;
 
     if (stonesInBlockPath || pushingOwnStone || onEdge)
-        return BoardPair::empty();
+        return Quarterboard::empty();
 #pragma endregion
 
 #pragma region Apply aggressive move
     // Move own stone up. Remove current stone and place it one square above
-    const Board ownStonesMoved = ownStones ^ stone | moveOne;
+    const Bitboard ownStonesMoved = ownStones ^ stone | moveOne;
 
     // Enemy stone is pushed up if it exists. If there is an enemy stone one
     // square in next square, duplicate it up and remove its previous position
-    const Board enemyStonesMoved = move<Direction>(moveOne & enemyStones)
-                                   | enemyStones & ~moveOne;
+    const Bitboard enemyStonesMoved = move<Direction>(moveOne & enemyStones)
+                                      | enemyStones & ~moveOne;
 #pragma endregion
 
     return {ownStonesMoved, enemyStonesMoved};
 }
 
 template<Direction Direction>
-void generatePassiveMoves(const Board own,
-                          const Board enemy,
-                          Vec<Board, 4> &moveOnes,
-                          Vec<Board, 4> &moveTwos)
+void generatePassiveMoves(const Bitboard own,
+                          const Bitboard enemy,
+                          Vec<Bitboard, 4> &moveOnes,
+                          Vec<Bitboard, 4> &moveTwos)
 {
-    Board stonesLeft = own;
+    Bitboard stonesLeft = own;
     while (stonesLeft)
     {
-        const Board stone = stonesLeft & -stonesLeft;
+        const Bitboard stone = stonesLeft & -stonesLeft;
         stonesLeft ^= stone;
 
         // First passive move
-        const Board moveOne = move<Direction>(stone);
+        const Bitboard moveOne = move<Direction>(stone);
         const bool allowed = passiveMoveAllowed(
                 moveOne, own, enemy
         );
         if (!allowed)
             continue;
 
-        Board ownAfterPassive = own ^ stone | moveOne;
+        Bitboard ownAfterPassive = own ^ stone | moveOne;
         moveOnes.add(ownAfterPassive);
 
         // Second passive move if first move was allowed
-        const Board moveTwo = move<Direction>(moveOne);
+        const Bitboard moveTwo = move<Direction>(moveOne);
         const bool allowed2 = passiveMoveAllowed(
                 moveTwo, ownAfterPassive, enemy
         );
         if (!allowed2)
             continue;
 
-        Board ownAfterPassive2 = ownAfterPassive ^ moveOne | moveTwo;
+        Bitboard ownAfterPassive2 = ownAfterPassive ^ moveOne | moveTwo;
         moveTwos.add(ownAfterPassive2);
     }
 }
 
 template<Direction Direction>
-void generateAggressiveMoves(const Board own,
-                             const Board enemy,
-                             Vec<BoardPair, 4> &moveOnes,
-                             Vec<BoardPair, 4> &moveTwos)
+void generateAggressiveMoves(const Bitboard own,
+                             const Bitboard enemy,
+                             Vec<Quarterboard, 4> &moveOnes,
+                             Vec<Quarterboard, 4> &moveTwos)
 {
-    Board stonesLeft = own;
+    Bitboard stonesLeft = own;
     while (stonesLeft)
     {
-        const Board stone = stonesLeft & -stonesLeft;
+        const Bitboard stone = stonesLeft & -stonesLeft;
         stonesLeft ^= stone;
 
         // First aggressive move
-        const BoardPair aggr1 = aggressiveMove<Direction>(own, enemy, stone);
+        const Quarterboard aggr1 = aggressiveMove<Direction>(own, enemy, stone);
         if (aggr1.isEmpty())
             continue;
         moveOnes.add(aggr1);
 
         // Second aggressive move if first move was allowed
-        const Board moveOne = move<Direction>(stone);
-        const BoardPair aggr2 = aggressiveMove<Direction>(aggr1.own,
-                                                          aggr1.enemy,
-                                                          moveOne);
+        const Bitboard moveOne = move<Direction>(stone);
+        const Quarterboard aggr2 = aggressiveMove<Direction>(aggr1.own,
+                                                             aggr1.enemy,
+                                                             moveOne);
         if (aggr2.isEmpty())
             continue;
         moveTwos.add(aggr2);
@@ -147,8 +148,8 @@ void generateMovesOnBoard(const BoardType passiveBoard,
 {
     // TODO: Profile if this is slower than pre-allocating with std::array
 
-    Vec<Board, 4> passiveMoveOnes = {};
-    Vec<Board, 4> passiveMoveTwos = {};
+    Vec<Bitboard, 4> passiveMoveOnes = {};
+    Vec<Bitboard, 4> passiveMoveTwos = {};
     generatePassiveMoves<Direction>(
             state.own[passiveBoard],
             state.enemy[passiveBoard],
@@ -156,8 +157,8 @@ void generateMovesOnBoard(const BoardType passiveBoard,
             passiveMoveTwos
     );
 
-    Vec<BoardPair, 4> aggressiveMoveOnes = {};
-    Vec<BoardPair, 4> aggressiveMoveTwos = {};
+    Vec<Quarterboard, 4> aggressiveMoveOnes = {};
+    Vec<Quarterboard, 4> aggressiveMoveTwos = {};
     generateAggressiveMoves<Direction>(
             state.own[aggressiveBoard],
             state.enemy[aggressiveBoard],
@@ -165,9 +166,9 @@ void generateMovesOnBoard(const BoardType passiveBoard,
             aggressiveMoveTwos
     );
 
-    for (const BoardPair &aggr: aggressiveMoveOnes)
+    for (const Quarterboard &aggr: aggressiveMoveOnes)
     {
-        for (const Board &passive: passiveMoveOnes)
+        for (const Bitboard &passive: passiveMoveOnes)
         {
             State newState = state;
             newState.own[passiveBoard] = passive;
@@ -177,9 +178,9 @@ void generateMovesOnBoard(const BoardType passiveBoard,
         }
     }
 
-    for (const BoardPair &aggr: aggressiveMoveTwos)
+    for (const Quarterboard &aggr: aggressiveMoveTwos)
     {
-        for (const Board &passive: passiveMoveTwos)
+        for (const Bitboard &passive: passiveMoveTwos)
         {
             State newState = state;
             newState.own[passiveBoard] = passive;

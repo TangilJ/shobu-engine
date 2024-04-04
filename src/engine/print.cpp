@@ -5,20 +5,20 @@
 #include <bitset>
 #include <cassert>
 
-std::string toBitString(const Board board)
+std::string toBitString(const Bitboard board)
 {
     const std::bitset<16> x(board);
     return x.to_string();
 }
 
-void printBits(const Board board)
+void printBits(const Bitboard board)
 {
     std::cout << toBitString(board) << std::endl;
 }
 
-void print(const Board board)
+void print(const Bitboard board)
 {
-    Board cell = 0b1000'0000'0000'0000;
+    Bitboard cell = 0b1000'0000'0000'0000;
     for (int i = 0; i < 4; ++i)
     {
         for (int j = 0; j < 4; ++j)
@@ -45,16 +45,16 @@ void print(const State state)
     std::cout << std::endl;
 }
 
-void printTwoBoards(const BoardPair boards)
+void printTwoBoards(const Quarterboard boards)
 {
     printTwoBoards(boards.own, boards.enemy, 0, 0);
 }
 
-void printTwoBoards(const Board ownLeft, const Board ownRight,
-                    const Board enemyLeft, const Board enemyRight)
+void printTwoBoards(const Bitboard ownLeft, const Bitboard ownRight,
+                    const Bitboard enemyLeft, const Bitboard enemyRight)
 {
-    Board leftCell = 0b1000'0000'0000'0000;
-    Board rightCell = 0b1000'0000'0000'0000;
+    Bitboard leftCell = 0b1000'0000'0000'0000;
+    Bitboard rightCell = 0b1000'0000'0000'0000;
 
     for (int i = 0; i < 4; ++i)
     {

@@ -13,13 +13,14 @@
 // ...o
 // ....
 // ..o.
-using Board = uint16_t;
+using Bitboard = uint16_t;
 
-struct BoardPair {
-    Board own;
-    Board enemy;
+struct Quarterboard
+{
+    Bitboard own;
+    Bitboard enemy;
 
-    static BoardPair empty()
+    static Quarterboard empty()
     {
         return {0, 0};
     }
@@ -30,14 +31,16 @@ struct BoardPair {
     }
 };
 
-enum BoardType : int {
+enum BoardType
+{
     TopLeft = 0,
     TopRight = 1,
     BottomLeft = 2,
     BottomRight = 3
 };
 
-enum class Direction {
+enum class Direction
+{
     Up,
     UpRight,
     Right,
@@ -48,12 +51,12 @@ enum class Direction {
     UpLeft
 };
 
-using BoardArray = std::array<Board, 4>;
+using BoardArray = std::array<Bitboard, 4>;
 
 // Index 0 = top left,    1 = top right,
-//       2 = bottom left, 3 = bottom right 
-// TODO: Use BoardPair for this
-struct State {
+//       2 = bottom left, 3 = bottom right
+struct State
+{
     BoardArray own;
     BoardArray enemy;
 };
