@@ -76,8 +76,8 @@ BoardPair aggressiveMove(const Board ownStones,
 template<Direction Direction>
 void generatePassiveMoves(const Board own,
                           const Board enemy,
-                          std::vector<Board> &moveOnes,
-                          std::vector<Board> &moveTwos)
+                          Vec<Board, 4> &moveOnes,
+                          Vec<Board, 4> &moveTwos)
 {
     Board stonesLeft = own;
     while (stonesLeft)
@@ -94,7 +94,7 @@ void generatePassiveMoves(const Board own,
             continue;
 
         Board ownAfterPassive = own ^ stone | moveOne;
-        moveOnes.push_back(ownAfterPassive);
+        moveOnes.add(ownAfterPassive);
 
         // Second passive move if first move was allowed
         const Board moveTwo = move<Direction>(moveOne);
@@ -105,15 +105,15 @@ void generatePassiveMoves(const Board own,
             continue;
 
         Board ownAfterPassive2 = ownAfterPassive ^ moveOne | moveTwo;
-        moveTwos.push_back(ownAfterPassive2);
+        moveTwos.add(ownAfterPassive2);
     }
 }
 
 template<Direction Direction>
 void generateAggressiveMoves(const Board own,
                              const Board enemy,
-                             std::vector<BoardPair> &moveOnes,
-                             std::vector<BoardPair> &moveTwos)
+                             Vec<BoardPair, 4> &moveOnes,
+                             Vec<BoardPair, 4> &moveTwos)
 {
     Board stonesLeft = own;
     while (stonesLeft)
@@ -125,7 +125,7 @@ void generateAggressiveMoves(const Board own,
         const BoardPair aggr1 = aggressiveMove<Direction>(own, enemy, stone);
         if (aggr1.isEmpty())
             continue;
-        moveOnes.push_back(aggr1);
+        moveOnes.add(aggr1);
 
         // Second aggressive move if first move was allowed
         const Board moveOne = move<Direction>(stone);
@@ -134,21 +134,21 @@ void generateAggressiveMoves(const Board own,
                                                           moveOne);
         if (aggr2.isEmpty())
             continue;
-        moveTwos.push_back(aggr2);
+        moveTwos.add(aggr2);
     }
 }
 
 
 template<Direction Direction>
-void plyForDirection(const BoardType passiveBoard,
-                     const BoardType aggressiveBoard,
-                     const State &state,
-                     States &states)
+void generateMovesOnBoard(const BoardType passiveBoard,
+                          const BoardType aggressiveBoard,
+                          const State &state,
+                          std::vector<State> &states)
 {
     // TODO: Profile if this is slower than pre-allocating with std::array
 
-    std::vector<Board> passiveMoveOnes = {};
-    std::vector<Board> passiveMoveTwos = {};
+    Vec<Board, 4> passiveMoveOnes = {};
+    Vec<Board, 4> passiveMoveTwos = {};
     generatePassiveMoves<Direction>(
             state.own[passiveBoard],
             state.enemy[passiveBoard],
@@ -156,8 +156,8 @@ void plyForDirection(const BoardType passiveBoard,
             passiveMoveTwos
     );
 
-    std::vector<BoardPair> aggressiveMoveOnes = {};
-    std::vector<BoardPair> aggressiveMoveTwos = {};
+    Vec<BoardPair, 4> aggressiveMoveOnes = {};
+    Vec<BoardPair, 4> aggressiveMoveTwos = {};
     generateAggressiveMoves<Direction>(
             state.own[aggressiveBoard],
             state.enemy[aggressiveBoard],
@@ -173,7 +173,7 @@ void plyForDirection(const BoardType passiveBoard,
             newState.own[passiveBoard] = passive;
             newState.own[aggressiveBoard] = aggr.own;
             newState.enemy[aggressiveBoard] = aggr.enemy;
-            states.add(newState);
+            states.push_back(newState);
         }
     }
 
@@ -185,29 +185,29 @@ void plyForDirection(const BoardType passiveBoard,
             newState.own[passiveBoard] = passive;
             newState.own[aggressiveBoard] = aggr.own;
             newState.enemy[aggressiveBoard] = aggr.enemy;
-            states.add(newState);
+            states.push_back(newState);
         }
     }
 }
 
 template<Direction Direction>
-void addMovesForDirection(const State state, States &states)
+void generateMovesForDirection(const State state, std::vector<State> &states)
 {
     // Note: bottom boards are always homeboards
-    plyForDirection<Direction>(BottomLeft, TopRight, state, states);
-    plyForDirection<Direction>(BottomLeft, BottomRight, state, states);
-    plyForDirection<Direction>(BottomRight, TopLeft, state, states);
-    plyForDirection<Direction>(BottomRight, BottomLeft, state, states);
+    generateMovesOnBoard<Direction>(BottomLeft, TopRight, state, states);
+    generateMovesOnBoard<Direction>(BottomLeft, BottomRight, state, states);
+    generateMovesOnBoard<Direction>(BottomRight, TopLeft, state, states);
+    generateMovesOnBoard<Direction>(BottomRight, BottomLeft, state, states);
 }
 
-void addMoves(const State state, States &states)
+void generateAllMovesInPly(const State state, std::vector<State> &states)
 {
-    addMovesForDirection<Direction::Up>(state, states);
-    addMovesForDirection<Direction::UpRight>(state, states);
-    addMovesForDirection<Direction::Right>(state, states);
-    addMovesForDirection<Direction::DownRight>(state, states);
-    addMovesForDirection<Direction::Down>(state, states);
-    addMovesForDirection<Direction::DownLeft>(state, states);
-    addMovesForDirection<Direction::Left>(state, states);
-    addMovesForDirection<Direction::UpLeft>(state, states);
+    generateMovesForDirection<Direction::Up>(state, states);
+    generateMovesForDirection<Direction::UpRight>(state, states);
+    generateMovesForDirection<Direction::Right>(state, states);
+    generateMovesForDirection<Direction::DownRight>(state, states);
+    generateMovesForDirection<Direction::Down>(state, states);
+    generateMovesForDirection<Direction::DownLeft>(state, states);
+    generateMovesForDirection<Direction::Left>(state, states);
+    generateMovesForDirection<Direction::UpLeft>(state, states);
 }

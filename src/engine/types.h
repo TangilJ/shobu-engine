@@ -58,30 +58,36 @@ struct State {
     BoardArray enemy;
 };
 
-
-struct States {
+template<typename T, size_t n>
+struct Vec
+{
 private:
-    static constexpr int arrayMaxSize = 300;
     unsigned short size = 0;
-    std::array<State, arrayMaxSize> array{};
+    std::array<T, n> array{};
 
 public:
-    [[nodiscard]] State operator[](const int i) const
+    T operator[](const int i) const
     {
         return array[i];
     }
 
-    void add(State &state)
+    auto add(const T &x)
     {
-        assert(size <= arrayMaxSize);
-        array[size] = state;
+        assert(size <= n);
+        array[size] = x;
         size++;
     }
 
-    [[nodiscard]] int length() const
+    auto begin()
     {
-        return size;
+        return array.begin();
+    }
+
+    auto end()
+    {
+        return array.begin() + size;
     }
 };
+
 
 #endif //SHOBU_TYPES_H

@@ -18,24 +18,24 @@ BoardPair aggressiveMove(Board ownStones,
 template<Direction Direction>
 void generatePassiveMoves(Board own,
                           Board enemy,
-                          std::vector<Board> &moveOnes,
-                          std::vector<Board> &moveTwos);
+                          Vec<Board, 4> &moveOnes,
+                          Vec<Board, 4> &moveTwos);
 
 template<Direction Direction>
 void generateAggressiveMoves(Board own,
                              Board enemy,
-                             std::vector<BoardPair> &moveOnes,
-                             std::vector<BoardPair> &moveTwos);
+                             Vec<BoardPair, 4> &moveOnes,
+                             Vec<BoardPair, 4> &moveTwos);
 
 template<Direction Direction>
-void plyForDirection(BoardType passiveBoard,
-                     BoardType aggressiveBoard,
-                     const State &state,
-                     States &states);
+void generateMovesOnBoard(BoardType passiveBoard,
+                          BoardType aggressiveBoard,
+                          const State &state,
+                          std::vector<State> &states);
 
 template<Direction Direction>
-void addMovesForDirection(State state, States &states);
+void generateMovesForDirection(State state, std::vector<State> &states);
 
-void addMoves(State state, States &states);
+void generateAllMovesInPly(State state, std::vector<State> &states);
 
 #endif //SHOBU_MOVEGEN_H
