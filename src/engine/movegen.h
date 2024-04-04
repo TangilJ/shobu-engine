@@ -3,27 +3,39 @@
 
 #include "types.h"
 
-template <Direction>
-void addPassiveMoves(BoardType passiveBoard,
-                     BoardType aggressiveBoard,
-                     const State &aggr1,
-                     const State &aggr2,
-                     States &states);
+template<Direction Direction>
+constexpr Board move(Board board);
 
-template <Direction Direction>
+bool passiveMoveAllowed(Board target,
+                        Board ownStones,
+                        Board enemyStones);
+
+template<Direction Direction>
 BoardPair aggressiveMove(Board ownStones,
                          Board enemyStones,
                          Board stone);
 
-template <Direction Direction>
-void addBothMoves(State state,
-                  BoardType aggressiveBoard,
-                  BoardType passiveBoard,
-                  States& states);
+template<Direction Direction>
+void generatePassiveMoves(Board own,
+                          Board enemy,
+                          std::vector<Board> &moveOnes,
+                          std::vector<Board> &moveTwos);
 
-template <Direction Direction>
-void addMovesForDirection(State state, States& states);
+template<Direction Direction>
+void generateAggressiveMoves(Board own,
+                             Board enemy,
+                             std::vector<BoardPair> &moveOnes,
+                             std::vector<BoardPair> &moveTwos);
 
-void addMoves(State state, States& states);
+template<Direction Direction>
+void plyForDirection(BoardType passiveBoard,
+                     BoardType aggressiveBoard,
+                     const State &state,
+                     States &states);
+
+template<Direction Direction>
+void addMovesForDirection(State state, States &states);
+
+void addMoves(State state, States &states);
 
 #endif //SHOBU_MOVEGEN_H

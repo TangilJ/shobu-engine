@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <array>
 #include <cassert>
+#include <vector>
 
 // 4x4 board
 // Rightmost bit is top left of board

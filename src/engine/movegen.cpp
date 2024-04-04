@@ -19,6 +19,7 @@ constexpr Board move(const Board board)
     // @formatter:on
 }
 
+// Is the target allowed to be where it is, given the current quarterboard?
 bool passiveMoveAllowed(Board target, Board ownStones, Board enemyStones)
 {
     // Passive move not allowed if it would push another stone
@@ -31,69 +32,22 @@ bool passiveMoveAllowed(Board target, Board ownStones, Board enemyStones)
     return !(blocked || onEdge);
 }
 
-template<Direction Direction>
-void addPassiveMoves(const BoardType passiveBoard,
-                     const BoardType aggressiveBoard,
-                     const State &aggr1,
-                     const State &aggr2,
-                     States &states)
-{
-    const Board ownStones = aggr1.own[passiveBoard];
-    const Board enemyStones = aggr1.enemy[passiveBoard];
-
-    // Go through each own stone on passive board
-    // TODO: Abstract this behind an iterator for Board
-    Board stonesLeft = ownStones;
-    while (stonesLeft) {
-        const Board currentStone = stonesLeft & -stonesLeft;
-        stonesLeft ^= currentStone;
-
-        // Passive move when aggressive moves 1 square
-        const Board moveOne = move<Direction>(currentStone);
-        const bool passive1Allowed = passiveMoveAllowed(
-            moveOne, ownStones, enemyStones
-        );
-        if (!passive1Allowed)
-            continue;
-
-        Board ownAfterPassive1 = ownStones ^ currentStone | moveOne;
-        State newState = aggr1;
-        newState.own[passiveBoard] = ownAfterPassive1;
-        states.add(newState);
-
-        // Passive move when aggressive moves 2 squares
-        if (aggr2.own[aggressiveBoard] == 0)
-            // Empty board means no 2nd aggressive move
-            continue;
-
-        const Board moveTwo = move<Direction>(moveOne);
-        const bool passive2Allowed = passiveMoveAllowed(
-            moveTwo, ownAfterPassive1, enemyStones
-        );
-        if (!passive2Allowed)
-            continue;
-
-        Board ownAfterPassive2 = ownAfterPassive1 ^ moveOne | moveTwo;
-        newState = aggr2;
-        newState.own[passiveBoard] = ownAfterPassive2;
-        states.add(newState);
-    }
-}
-
 // Returns 0 if aggressive move not allowed
 template<Direction Direction>
 BoardPair aggressiveMove(const Board ownStones,
                          const Board enemyStones,
                          const Board stone)
 {
+    // TODO: Split into 2 smaller functions
+
 #pragma region Move restrictions
     // Aggressive move not allowed when pushing more than 1 stone
     const Board moveOne = move<Direction>(stone);
     const Board moveTwo = move<Direction>(moveOne);
     const Board blockPath = moveOne | moveTwo;
     const bool stonesInBlockPath =
-        moveTwo != empty
-        && ((ownStones | enemyStones) & blockPath) == blockPath;
+            moveTwo != empty
+            && ((ownStones | enemyStones) & blockPath) == blockPath;
 
     // Aggressive move not allowed when pushing own stone
     const bool pushingOwnStone = ownStones & moveOne;
@@ -120,45 +74,119 @@ BoardPair aggressiveMove(const Board ownStones,
 }
 
 template<Direction Direction>
-void addBothMoves(const State state,
-                  const BoardType aggressiveBoard,
-                  const BoardType passiveBoard,
-                  States &states)
+void generatePassiveMoves(const Board own,
+                          const Board enemy,
+                          std::vector<Board> &moveOnes,
+                          std::vector<Board> &moveTwos)
 {
-    const Board ownStones = state.own[aggressiveBoard];
-    const Board enemyStones = state.enemy[aggressiveBoard];
+    Board stonesLeft = own;
+    while (stonesLeft)
+    {
+        const Board stone = stonesLeft & -stonesLeft;
+        stonesLeft ^= stone;
 
-    // Go through each own stone on passive board
-    Board stonesLeft = ownStones;
-    while (stonesLeft) {
+        // First passive move
+        const Board moveOne = move<Direction>(stone);
+        const bool allowed = passiveMoveAllowed(
+                moveOne, own, enemy
+        );
+        if (!allowed)
+            continue;
+
+        Board ownAfterPassive = own ^ stone | moveOne;
+        moveOnes.push_back(ownAfterPassive);
+
+        // Second passive move if first move was allowed
+        const Board moveTwo = move<Direction>(moveOne);
+        const bool allowed2 = passiveMoveAllowed(
+                moveTwo, ownAfterPassive, enemy
+        );
+        if (!allowed2)
+            continue;
+
+        Board ownAfterPassive2 = ownAfterPassive ^ moveOne | moveTwo;
+        moveTwos.push_back(ownAfterPassive2);
+    }
+}
+
+template<Direction Direction>
+void generateAggressiveMoves(const Board own,
+                             const Board enemy,
+                             std::vector<BoardPair> &moveOnes,
+                             std::vector<BoardPair> &moveTwos)
+{
+    Board stonesLeft = own;
+    while (stonesLeft)
+    {
         const Board stone = stonesLeft & -stonesLeft;
         stonesLeft ^= stone;
 
         // First aggressive move
-        const BoardPair aggr1 = aggressiveMove<Direction>(
-            ownStones, enemyStones, stone
-        );
+        const BoardPair aggr1 = aggressiveMove<Direction>(own, enemy, stone);
         if (aggr1.isEmpty())
             continue;
+        moveOnes.push_back(aggr1);
 
-        State aggr1State = state;
-        aggr1State.own[aggressiveBoard] = aggr1.own;
-        aggr1State.enemy[aggressiveBoard] = aggr1.enemy;
-
-        // Second aggressive move
+        // Second aggressive move if first move was allowed
         const Board moveOne = move<Direction>(stone);
-        const BoardPair aggr2 = aggressiveMove<Direction>(
-            aggr1.own, aggr1.enemy, moveOne
-        );
+        const BoardPair aggr2 = aggressiveMove<Direction>(aggr1.own,
+                                                          aggr1.enemy,
+                                                          moveOne);
+        if (aggr2.isEmpty())
+            continue;
+        moveTwos.push_back(aggr2);
+    }
+}
 
-        State aggr2State = state;
-        aggr2State.own[aggressiveBoard] = aggr2.own;
-        aggr2State.enemy[aggressiveBoard] = aggr2.enemy;
 
-        // Add passive moves to both aggressive moves
-        addPassiveMoves<Direction>(
-            passiveBoard, aggressiveBoard, aggr1State, aggr2State, states
-        );
+template<Direction Direction>
+void plyForDirection(const BoardType passiveBoard,
+                     const BoardType aggressiveBoard,
+                     const State &state,
+                     States &states)
+{
+    // TODO: Profile if this is slower than pre-allocating with std::array
+
+    std::vector<Board> passiveMoveOnes = {};
+    std::vector<Board> passiveMoveTwos = {};
+    generatePassiveMoves<Direction>(
+            state.own[passiveBoard],
+            state.enemy[passiveBoard],
+            passiveMoveOnes,
+            passiveMoveTwos
+    );
+
+    std::vector<BoardPair> aggressiveMoveOnes = {};
+    std::vector<BoardPair> aggressiveMoveTwos = {};
+    generateAggressiveMoves<Direction>(
+            state.own[aggressiveBoard],
+            state.enemy[aggressiveBoard],
+            aggressiveMoveOnes,
+            aggressiveMoveTwos
+    );
+
+    for (const BoardPair &aggr: aggressiveMoveOnes)
+    {
+        for (const Board &passive: passiveMoveOnes)
+        {
+            State newState = state;
+            newState.own[passiveBoard] = passive;
+            newState.own[aggressiveBoard] = aggr.own;
+            newState.enemy[aggressiveBoard] = aggr.enemy;
+            states.add(newState);
+        }
+    }
+
+    for (const BoardPair &aggr: aggressiveMoveTwos)
+    {
+        for (const Board &passive: passiveMoveTwos)
+        {
+            State newState = state;
+            newState.own[passiveBoard] = passive;
+            newState.own[aggressiveBoard] = aggr.own;
+            newState.enemy[aggressiveBoard] = aggr.enemy;
+            states.add(newState);
+        }
     }
 }
 
@@ -166,10 +194,10 @@ template<Direction Direction>
 void addMovesForDirection(const State state, States &states)
 {
     // Note: bottom boards are always homeboards
-    addBothMoves<Direction>(state, TopLeft, BottomRight, states);
-    addBothMoves<Direction>(state, BottomLeft, BottomRight, states);
-    addBothMoves<Direction>(state, TopRight, BottomLeft, states);
-    addBothMoves<Direction>(state, BottomRight, BottomLeft, states);
+    plyForDirection<Direction>(BottomLeft, TopRight, state, states);
+    plyForDirection<Direction>(BottomLeft, BottomRight, state, states);
+    plyForDirection<Direction>(BottomRight, TopLeft, state, states);
+    plyForDirection<Direction>(BottomRight, BottomLeft, state, states);
 }
 
 void addMoves(const State state, States &states)
