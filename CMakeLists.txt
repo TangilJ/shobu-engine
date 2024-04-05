@@ -13,13 +13,27 @@ else ()
     message(FATAL_ERROR "CMAKE_BUILD_TYPE was not 'Debug' or 'Release'")
 endif ()
 
+set(
+        ENGINE_SOURCES
 
-add_subdirectory(src/engine)
+        src/engine/types.h
+        src/engine/movegen.cpp
+        src/engine/movegen.h
+        src/engine/print.cpp
+        src/engine/print.h
+        src/engine/consts.h
+        src/engine/perft.cpp
+        src/engine/perft.h
+        src/engine/search.cpp
+        src/engine/search.h
+)
+
 add_executable(
         Shobu
         src/main.cpp
+        
+        ${ENGINE_SOURCES}
 )
-target_link_libraries(Shobu ShobuEngine)
 
 
 add_subdirectory(extern/doctest)
@@ -27,7 +41,8 @@ add_executable(
         ShobuTests
         test/passivemovetest.cpp
         test/aggressivemovetest.cpp
+
+        ${ENGINE_SOURCES}
 )
 target_compile_definitions(ShobuTests PRIVATE STANDALONE_TESTS)
-target_link_libraries(ShobuTests ShobuEngine)
 target_link_libraries(ShobuTests doctest)

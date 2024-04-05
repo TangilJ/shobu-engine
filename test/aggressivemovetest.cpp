@@ -1,8 +1,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 #include <doctest/doctest.h>
-#include "movegen.h"
-#include "consts.h"
+#include "../src/engine/movegen.h"
+#include "../src/engine/consts.h"
 
 template <Direction Direction>
 void checkLegal(const Bitboard own, const Bitboard enemy, const Bitboard stone,

@@ -65,7 +65,7 @@ template<typename T, size_t n>
 struct Vec
 {
 private:
-    unsigned short size = 0;
+    unsigned short len = 0;
     std::array<T, n> array{};
 
 public:
@@ -76,9 +76,9 @@ public:
 
     auto add(const T &x)
     {
-        assert(size <= n);
-        array[size] = x;
-        size++;
+        assert(len <= n);
+        array[len] = x;
+        len++;
     }
 
     auto begin()
@@ -88,7 +88,12 @@ public:
 
     auto end()
     {
-        return array.begin() + size;
+        return array.begin() + len;
+    }
+    
+    auto size()
+    {
+        return len;
     }
 };
 

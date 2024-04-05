@@ -1,9 +1,9 @@
 #include <cstdio>
-#include "types.h"
-#include "print.h"
-#include "consts.h"
-#include "movegen.h"
-#include "perft.h"
+#include "engine/types.h"
+#include "engine/print.h"
+#include "engine/consts.h"
+#include "engine/movegen.h"
+#include "engine/perft.h"
 
 int main()
 {

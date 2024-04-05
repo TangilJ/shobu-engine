@@ -1,8 +1,8 @@
 #include <doctest/doctest.h>
 #include <algorithm>
-#include "movegen.h"
-#include "types.h"
-#include "consts.h"
+#include "../src/engine/movegen.h"
+#include "../src/engine/types.h"
+#include "../src/engine/consts.h"
 
 
 #pragma region Up
@@ -18,19 +18,19 @@ TEST_CASE("Passive move up - one stone")
     );
 }
 
-static void checkContains(std::vector<Bitboard> &moveOnes, Bitboard b)
+static void checkContains(Vec<Bitboard, 4> &moveOnes, Bitboard b)
 {
     CHECK((std::find(moveOnes.begin(), moveOnes.end(), b) != moveOnes.end()));
 }
 
 template<Direction Direction>
 void checkPassiveMoves(Bitboard own,
-                       Bitboard enemy,
+                       Bitboard enemy,  
                        const std::vector<Bitboard> &expectedOnes,
                        const std::vector<Bitboard> &expectedTwos)
 {
-    std::vector<Bitboard> moveOnes;
-    std::vector<Bitboard> moveTwos;
+    Vec<Bitboard, 4> moveOnes;
+    Vec<Bitboard, 4> moveTwos;
     generatePassiveMoves<Direction>(
             own,
             enemy,
