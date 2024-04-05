@@ -61,12 +61,12 @@ struct State
     BoardArray enemy;
 };
 
-template<typename T, size_t n>
+template<typename T, size_t maxSize>
 struct Vec
 {
 private:
     unsigned short len = 0;
-    std::array<T, n> array{};
+    std::array<T, maxSize> array{};
 
 public:
     T operator[](const int i) const
@@ -76,7 +76,7 @@ public:
 
     auto add(const T &x)
     {
-        assert(len <= n);
+        assert(len <= maxSize);
         array[len] = x;
         len++;
     }
