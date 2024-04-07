@@ -5,11 +5,11 @@
 Win checkWin(const State state)
 {
     for (const Bitboard board: state.own)
-        if (_mm_popcnt_u32(board) == 0)
+        if (board == 0)
             return Win::OpponentWin;
 
     for (const Bitboard board: state.enemy)
-        if (_mm_popcnt_u32(board) == 0)
+        if (board == 0)
             return Win::OwnWin;
 
     return Win::GameOngoing;

@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 23)
 
 # SIMD code for NNUE makes use of AVX extension
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions("-mpopcnt -O0")
+    add_definitions("-O0")
 elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_definitions("-mpopcnt -Ofast")
+    add_definitions("-Ofast")
 else ()
     message(FATAL_ERROR "CMAKE_BUILD_TYPE was not 'Debug' or 'Release'")
 endif ()
@@ -36,11 +36,13 @@ add_executable(
 )
 
 
+# Tests only run on Debug mode
 add_subdirectory(extern/doctest)
 add_executable(
         ShobuTests
         test/passivemovetest.cpp
         test/aggressivemovetest.cpp
+        test/movegentest.cpp
 
         ${ENGINE_SOURCES}
 )
