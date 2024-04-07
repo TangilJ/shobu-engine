@@ -29,6 +29,12 @@ struct Quarterboard
     {
         return own == 0;
     }
+
+    bool operator==(const Quarterboard &rhs) const
+    {
+        return own == rhs.own &&
+               enemy == rhs.enemy;
+    }
 };
 
 // TODO: Rename to Quarter
@@ -77,13 +83,23 @@ struct State
     template<BoardType quarter>
     constexpr State setQuarter(const Quarterboard quarterboard) const
     {
-        return State {
+        // @formatter:off
+        return State{
             quarter == BoardType::TopLeft     ? quarterboard : topLeft,
             quarter == BoardType::TopRight    ? quarterboard : topRight,
             quarter == BoardType::BottomLeft  ? quarterboard : bottomLeft,
             quarter == BoardType::BottomRight ? quarterboard : bottomRight,
         };
-        
+        // @formatter:on
+
+    }
+
+    bool operator==(const State &rhs) const
+    {
+        return topLeft == rhs.topLeft &&
+               topRight == rhs.topRight &&
+               bottomLeft == rhs.bottomLeft &&
+               bottomRight == rhs.bottomRight;
     }
 };
 
@@ -116,7 +132,7 @@ public:
     {
         return array.begin() + len;
     }
-    
+
     auto size()
     {
         return len;
