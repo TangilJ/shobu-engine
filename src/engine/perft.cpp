@@ -21,15 +21,11 @@ uint64_t perft(const State state, const int depth)
     uint64_t total = 0;
     for (int i = 0; i < states.size(); ++i)
     {
-        State reversedPlayers{};
-        reversedPlayers.own = {
-                state.enemy[3], state.enemy[2],
-                state.enemy[1], state.enemy[0]
+        State reversedPlayers = {
+            state.bottomRight, state.bottomLeft,
+            state.topRight, state.topLeft
         };
-        reversedPlayers.enemy = {
-                state.own[3], state.own[2],
-                state.own[1], state.own[0]
-        };
+
         total += perft(reversedPlayers, depth - 1);
     }
 

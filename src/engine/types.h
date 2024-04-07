@@ -31,12 +31,13 @@ struct Quarterboard
     }
 };
 
-enum BoardType
+// TODO: Rename to Quarter
+enum class BoardType
 {
-    TopLeft = 0,
-    TopRight = 1,
-    BottomLeft = 2,
-    BottomRight = 3
+    TopLeft,
+    TopRight,
+    BottomLeft,
+    BottomRight
 };
 
 enum class Direction
@@ -51,14 +52,39 @@ enum class Direction
     UpLeft
 };
 
+// TODO: Pack into a uint64_t instead
 using BoardArray = std::array<Bitboard, 4>;
 
-// Index 0 = top left,    1 = top right,
-//       2 = bottom left, 3 = bottom right
 struct State
 {
-    BoardArray own;
-    BoardArray enemy;
+    Quarterboard topLeft;
+    Quarterboard topRight;
+    Quarterboard bottomLeft;
+    Quarterboard bottomRight;
+
+    template<BoardType quarter>
+    constexpr Quarterboard getQuarter() const
+    {
+        // @formatter:off
+        return quarter == BoardType::TopLeft     ? topLeft
+             : quarter == BoardType::TopRight    ? topRight
+             : quarter == BoardType::BottomLeft  ? bottomLeft
+             : quarter == BoardType::BottomRight ? bottomRight
+             : throw;
+        // @formatter:on
+    }
+
+    template<BoardType quarter>
+    constexpr State setQuarter(const Quarterboard quarterboard) const
+    {
+        return State {
+            quarter == BoardType::TopLeft     ? quarterboard : topLeft,
+            quarter == BoardType::TopRight    ? quarterboard : topRight,
+            quarter == BoardType::BottomLeft  ? quarterboard : bottomLeft,
+            quarter == BoardType::BottomRight ? quarterboard : bottomRight,
+        };
+        
+    }
 };
 
 template<typename T, size_t maxSize>

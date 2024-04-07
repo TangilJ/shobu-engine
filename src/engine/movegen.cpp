@@ -139,20 +139,15 @@ void generateAggressiveMoves(const Bitboard own,
     }
 }
 
-
-template<Direction Direction>
-void generateMovesOnBoard(const BoardType passiveBoard,
-                          const BoardType aggressiveBoard,
-                          const State &state,
+template<Direction Direction, BoardType passiveBoard, BoardType aggressiveBoard>
+void generateMovesOnBoard(const State &state,
                           std::vector<State> &states)
 {
-    // TODO: Profile if this is slower than pre-allocating with std::array
-
     Vec<Bitboard, 4> passiveMoveOnes = {};
     Vec<Bitboard, 4> passiveMoveTwos = {};
     generatePassiveMoves<Direction>(
-            state.own[passiveBoard],
-            state.enemy[passiveBoard],
+            state.getQuarter<passiveBoard>().own,
+            state.getQuarter<passiveBoard>().enemy,
             passiveMoveOnes,
             passiveMoveTwos
     );
@@ -160,8 +155,8 @@ void generateMovesOnBoard(const BoardType passiveBoard,
     Vec<Quarterboard, 4> aggressiveMoveOnes = {};
     Vec<Quarterboard, 4> aggressiveMoveTwos = {};
     generateAggressiveMoves<Direction>(
-            state.own[aggressiveBoard],
-            state.enemy[aggressiveBoard],
+            state.getQuarter<aggressiveBoard>().own,
+            state.getQuarter<aggressiveBoard>().enemy,
             aggressiveMoveOnes,
             aggressiveMoveTwos
     );
@@ -170,10 +165,13 @@ void generateMovesOnBoard(const BoardType passiveBoard,
     {
         for (const Bitboard &passive: passiveMoveOnes)
         {
-            State newState = state;
-            newState.own[passiveBoard] = passive;
-            newState.own[aggressiveBoard] = aggr.own;
-            newState.enemy[aggressiveBoard] = aggr.enemy;
+            Quarterboard newPassive = {
+                passive,
+                state.getQuarter<passiveBoard>().enemy
+            };
+
+            State newState = state.setQuarter<passiveBoard>(newPassive);
+            newState = newState.setQuarter<aggressiveBoard>(aggr);
             states.push_back(newState);
         }
     }
@@ -182,10 +180,13 @@ void generateMovesOnBoard(const BoardType passiveBoard,
     {
         for (const Bitboard &passive: passiveMoveTwos)
         {
-            State newState = state;
-            newState.own[passiveBoard] = passive;
-            newState.own[aggressiveBoard] = aggr.own;
-            newState.enemy[aggressiveBoard] = aggr.enemy;
+            Quarterboard newPassive = {
+                passive,
+                state.getQuarter<passiveBoard>().enemy
+            };
+
+            State newState = state.setQuarter<passiveBoard>(newPassive);
+            newState = newState.setQuarter<aggressiveBoard>(aggr);
             states.push_back(newState);
         }
     }
@@ -195,10 +196,10 @@ template<Direction Direction>
 void generateMovesForDirection(const State state, std::vector<State> &states)
 {
     // Note: bottom boards are always homeboards
-    generateMovesOnBoard<Direction>(BottomLeft, TopRight, state, states);
-    generateMovesOnBoard<Direction>(BottomLeft, BottomRight, state, states);
-    generateMovesOnBoard<Direction>(BottomRight, TopLeft, state, states);
-    generateMovesOnBoard<Direction>(BottomRight, BottomLeft, state, states);
+    generateMovesOnBoard<Direction, BoardType::BottomLeft, BoardType::TopRight>(state, states);
+    generateMovesOnBoard<Direction, BoardType::BottomLeft, BoardType::BottomRight>(state, states);
+    generateMovesOnBoard<Direction, BoardType::BottomRight, BoardType::TopLeft>(state, states);
+    generateMovesOnBoard<Direction, BoardType::BottomRight, BoardType::BottomLeft>(state, states);
 }
 
 void generateAllMovesInPly(const State state, std::vector<State> &states)
