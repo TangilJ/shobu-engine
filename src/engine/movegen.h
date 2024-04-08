@@ -27,11 +27,8 @@ void generateAggressiveMoves(Bitboard own,
                              Vec<Quarterboard, 4> &moveOnes,
                              Vec<Quarterboard, 4> &moveTwos);
 
-template<Direction Direction>
-void generateMovesOnBoard(Quarter passiveBoard,
-                          Quarter aggressiveBoard,
-                          const State &state,
-                          std::vector<State> &states);
+template<Direction Direction, Quarter passiveBoard, Quarter aggressiveBoard>
+void generateMovesOnBoard(const State &state, std::vector<State> &states);
 
 template<Direction Direction>
 void generateMovesForDirection(State state, std::vector<State> &states);

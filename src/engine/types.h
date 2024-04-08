@@ -57,9 +57,6 @@ enum class Direction
     UpLeft
 };
 
-// TODO: Pack into a uint64_t instead
-using BoardArray = std::array<Bitboard, 4>;
-
 struct State
 {
     Quarterboard topLeft;
