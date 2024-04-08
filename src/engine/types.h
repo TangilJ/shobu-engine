@@ -37,8 +37,7 @@ struct Quarterboard
     }
 };
 
-// TODO: Rename to Quarter
-enum class BoardType
+enum class Quarter
 {
     TopLeft,
     TopRight,
@@ -68,27 +67,27 @@ struct State
     Quarterboard bottomLeft;
     Quarterboard bottomRight;
 
-    template<BoardType quarter>
+    template<Quarter quarter>
     constexpr Quarterboard getQuarter() const
     {
         // @formatter:off
-        return quarter == BoardType::TopLeft     ? topLeft
-             : quarter == BoardType::TopRight    ? topRight
-             : quarter == BoardType::BottomLeft  ? bottomLeft
-             : quarter == BoardType::BottomRight ? bottomRight
+        return quarter == Quarter::TopLeft     ? topLeft
+             : quarter == Quarter::TopRight    ? topRight
+             : quarter == Quarter::BottomLeft  ? bottomLeft
+             : quarter == Quarter::BottomRight ? bottomRight
              : throw;
         // @formatter:on
     }
 
-    template<BoardType quarter>
+    template<Quarter quarter>
     constexpr State setQuarter(const Quarterboard quarterboard) const
     {
         // @formatter:off
         return State{
-            quarter == BoardType::TopLeft     ? quarterboard : topLeft,
-            quarter == BoardType::TopRight    ? quarterboard : topRight,
-            quarter == BoardType::BottomLeft  ? quarterboard : bottomLeft,
-            quarter == BoardType::BottomRight ? quarterboard : bottomRight,
+            quarter == Quarter::TopLeft     ? quarterboard : topLeft,
+            quarter == Quarter::TopRight    ? quarterboard : topRight,
+            quarter == Quarter::BottomLeft  ? quarterboard : bottomLeft,
+            quarter == Quarter::BottomRight ? quarterboard : bottomRight,
         };
         // @formatter:on
 

@@ -139,7 +139,7 @@ void generateAggressiveMoves(const Bitboard own,
     }
 }
 
-template<Direction Direction, BoardType passiveBoard, BoardType aggressiveBoard>
+template<Direction Direction, Quarter passiveBoard, Quarter aggressiveBoard>
 void generateMovesOnBoard(const State &state,
                           std::vector<State> &states)
 {
@@ -196,10 +196,10 @@ template<Direction Direction>
 void generateMovesForDirection(const State state, std::vector<State> &states)
 {
     // Note: bottom boards are always homeboards
-    generateMovesOnBoard<Direction, BoardType::BottomLeft, BoardType::TopRight>(state, states);
-    generateMovesOnBoard<Direction, BoardType::BottomLeft, BoardType::BottomRight>(state, states);
-    generateMovesOnBoard<Direction, BoardType::BottomRight, BoardType::TopLeft>(state, states);
-    generateMovesOnBoard<Direction, BoardType::BottomRight, BoardType::BottomLeft>(state, states);
+    generateMovesOnBoard<Direction, Quarter::BottomLeft, Quarter::TopRight>(state, states);
+    generateMovesOnBoard<Direction, Quarter::BottomLeft, Quarter::BottomRight>(state, states);
+    generateMovesOnBoard<Direction, Quarter::BottomRight, Quarter::TopLeft>(state, states);
+    generateMovesOnBoard<Direction, Quarter::BottomRight, Quarter::BottomLeft>(state, states);
 }
 
 void generateAllMovesInPly(const State state, std::vector<State> &states)
