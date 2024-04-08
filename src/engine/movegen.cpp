@@ -20,8 +20,9 @@ constexpr Bitboard move(const Bitboard board)
 }
 
 // Is the target allowed to be where it is, given the current quarterboard?
-bool
-passiveMoveAllowed(Bitboard target, Bitboard ownStones, Bitboard enemyStones)
+bool passiveMoveAllowed(Bitboard target,
+                        Bitboard ownStones,
+                        Bitboard enemyStones)
 {
     // Passive move not allowed if it would push another stone
     const bool blocked = (ownStones | enemyStones) & target;
@@ -181,8 +182,14 @@ void generateMovesOnBoard(const State &state,
         aggressiveMoveTwos
     );
 
-    combinePassiveAggressive<passiveBoard, aggressiveBoard>(state, states, passiveMoveOnes, aggressiveMoveOnes);
-    combinePassiveAggressive<passiveBoard, aggressiveBoard>(state, states, passiveMoveTwos, aggressiveMoveTwos);
+    combinePassiveAggressive<passiveBoard, aggressiveBoard>(
+        state, states,
+        passiveMoveOnes, aggressiveMoveOnes
+    );
+    combinePassiveAggressive<passiveBoard, aggressiveBoard>(
+        state, states,
+        passiveMoveTwos, aggressiveMoveTwos
+    );
 }
 
 template<Direction Direction>
