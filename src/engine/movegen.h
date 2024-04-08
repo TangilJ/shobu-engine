@@ -11,9 +11,14 @@ bool passiveMoveAllowed(Bitboard target,
                         Bitboard enemyStones);
 
 template<Direction Direction>
-Quarterboard aggressiveMove(Bitboard ownStones,
-                            Bitboard enemyStones,
-                            Bitboard stone);
+bool isAggressiveMoveLegal(Bitboard ownStones,
+                           Bitboard enemyStones,
+                           Bitboard stone);
+
+template<Direction Direction>
+Quarterboard applyAggressiveMove(Bitboard ownStones,
+                                 Bitboard enemyStones,
+                                 Bitboard stone);
 
 template<Direction Direction>
 void generatePassiveMoves(Bitboard own,

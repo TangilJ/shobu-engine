@@ -20,16 +20,6 @@ struct Quarterboard
     Bitboard own;
     Bitboard enemy;
 
-    static Quarterboard empty()
-    {
-        return {0, 0};
-    }
-
-    bool isEmpty() const
-    {
-        return own == 0;
-    }
-
     bool operator==(const Quarterboard &rhs) const
     {
         return own == rhs.own &&
