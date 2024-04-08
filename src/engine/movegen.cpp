@@ -139,6 +139,28 @@ void generateAggressiveMoves(const Bitboard own,
     }
 }
 
+
+template<Quarter passiveBoard, Quarter aggressiveBoard>
+void combinePassiveAggressive(const State &state, std::vector<State> &states,
+                              Vec<Bitboard, 4> &passiveMoveOnes,
+                              Vec<Quarterboard, 4> &aggressiveMoveOnes)
+{
+    for (const Quarterboard &aggr: aggressiveMoveOnes)
+    {
+        for (const Bitboard &passive: passiveMoveOnes)
+        {
+            Quarterboard newPassive = {
+                passive,
+                state.getQuarter<passiveBoard>().enemy
+            };
+
+            State newState = state.setQuarter<passiveBoard>(newPassive);
+            newState = newState.setQuarter<aggressiveBoard>(aggr);
+            states.push_back(newState);
+        }
+    }
+}
+
 template<Direction Direction, Quarter passiveBoard, Quarter aggressiveBoard>
 void generateMovesOnBoard(const State &state,
                           std::vector<State> &states)
@@ -161,35 +183,8 @@ void generateMovesOnBoard(const State &state,
         aggressiveMoveTwos
     );
 
-    for (const Quarterboard &aggr: aggressiveMoveOnes)
-    {
-        for (const Bitboard &passive: passiveMoveOnes)
-        {
-            Quarterboard newPassive = {
-                passive,
-                state.getQuarter<passiveBoard>().enemy
-            };
-
-            State newState = state.setQuarter<passiveBoard>(newPassive);
-            newState = newState.setQuarter<aggressiveBoard>(aggr);
-            states.push_back(newState);
-        }
-    }
-
-    for (const Quarterboard &aggr: aggressiveMoveTwos)
-    {
-        for (const Bitboard &passive: passiveMoveTwos)
-        {
-            Quarterboard newPassive = {
-                passive,
-                state.getQuarter<passiveBoard>().enemy
-            };
-
-            State newState = state.setQuarter<passiveBoard>(newPassive);
-            newState = newState.setQuarter<aggressiveBoard>(aggr);
-            states.push_back(newState);
-        }
-    }
+    combinePassiveAggressive<passiveBoard, aggressiveBoard>(state, states, passiveMoveOnes, aggressiveMoveOnes);
+    combinePassiveAggressive<passiveBoard, aggressiveBoard>(state, states, passiveMoveTwos, aggressiveMoveTwos);
 }
 
 template<Direction Direction>
