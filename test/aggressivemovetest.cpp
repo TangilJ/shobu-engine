@@ -8,8 +8,8 @@ template<Direction Direction>
 void checkLegal(const Bitboard own, const Bitboard enemy, const Bitboard stone,
                 const Bitboard ownExpected, const Bitboard enemyExpected)
 {
-    const Quarterboard result = applyAggressiveMove<Direction>(
-        Quarterboard(own, enemy), stone
+    const Quarter result = applyAggressiveMove<Direction>(
+        Quarter(own, enemy), stone
     );
     CHECK((ownExpected == result.own));
     CHECK((enemyExpected == result.enemy));
@@ -19,7 +19,7 @@ void checkLegal(const Bitboard own, const Bitboard enemy, const Bitboard stone,
 template<Direction Direction>
 void checkIllegal(const Bitboard own, const Bitboard enemy, const Bitboard stone)
 {
-    const bool legal = isAggressiveMoveLegal<Direction>(Quarterboard(own, enemy), stone);
+    const bool legal = isAggressiveMoveLegal<Direction>(Quarter(own, enemy), stone);
 
     CHECK((!legal));
 }

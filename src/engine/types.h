@@ -15,19 +15,19 @@
 // ..o.
 using Bitboard = uint16_t;
 
-struct Quarterboard
+struct Quarter
 {
     Bitboard own;
     Bitboard enemy;
 
-    bool operator==(const Quarterboard &rhs) const
+    bool operator==(const Quarter &rhs) const
     {
         return own == rhs.own &&
                enemy == rhs.enemy;
     }
 };
 
-enum class Quarter
+enum class Location
 {
     TopLeft,
     TopRight,
@@ -49,32 +49,32 @@ enum class Direction
 
 struct State
 {
-    Quarterboard topLeft;
-    Quarterboard topRight;
-    Quarterboard bottomLeft;
-    Quarterboard bottomRight;
+    Quarter topLeft;
+    Quarter topRight;
+    Quarter bottomLeft;
+    Quarter bottomRight;
 
-    template<Quarter quarter>
-    constexpr Quarterboard getQuarter() const
+    template<Location location>
+    constexpr Quarter getQuarter() const
     {
         // @formatter:off
-        return quarter == Quarter::TopLeft     ? topLeft
-             : quarter == Quarter::TopRight    ? topRight
-             : quarter == Quarter::BottomLeft  ? bottomLeft
-             : quarter == Quarter::BottomRight ? bottomRight
+        return location == Location::TopLeft     ? topLeft
+             : location == Location::TopRight    ? topRight
+             : location == Location::BottomLeft  ? bottomLeft
+             : location == Location::BottomRight ? bottomRight
              : throw;
         // @formatter:on
     }
 
-    template<Quarter quarter>
-    constexpr State setQuarter(const Quarterboard quarterboard) const
+    template<Location location>
+    constexpr State setQuarter(const Quarter quarterboard) const
     {
         // @formatter:off
         return State{
-            quarter == Quarter::TopLeft     ? quarterboard : topLeft,
-            quarter == Quarter::TopRight    ? quarterboard : topRight,
-            quarter == Quarter::BottomLeft  ? quarterboard : bottomLeft,
-            quarter == Quarter::BottomRight ? quarterboard : bottomRight,
+            location == Location::TopLeft     ? quarterboard : topLeft,
+            location == Location::TopRight    ? quarterboard : topRight,
+            location == Location::BottomLeft  ? quarterboard : bottomLeft,
+            location == Location::BottomRight ? quarterboard : bottomRight,
         };
         // @formatter:on
 

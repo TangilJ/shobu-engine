@@ -45,7 +45,7 @@ void print(const State state)
     std::cout << std::endl;
 }
 
-void printTwoBoards(const Quarterboard boards)
+void printTwoBoards(const Quarter boards)
 {
     printTwoBoards(boards.own, boards.enemy, 0, 0);
 }

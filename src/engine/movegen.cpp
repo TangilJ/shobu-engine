@@ -34,7 +34,7 @@ passiveMoveAllowed(Bitboard target, Bitboard ownStones, Bitboard enemyStones)
 }
 
 template<Direction Direction>
-bool isAggressiveMoveLegal(const Quarterboard quarter,
+bool isAggressiveMoveLegal(const Quarter quarter,
                            const Bitboard stone)
 {
     // Aggressive move not allowed when pushing more than 1 stone
@@ -56,8 +56,8 @@ bool isAggressiveMoveLegal(const Quarterboard quarter,
 }
 
 template<Direction Direction>
-Quarterboard applyAggressiveMove(const Quarterboard quarter,
-                                 const Bitboard stone)
+Quarter applyAggressiveMove(const Quarter quarter,
+                            const Bitboard stone)
 {
     const Bitboard moveOne = move<Direction>(stone);
 
@@ -73,7 +73,7 @@ Quarterboard applyAggressiveMove(const Quarterboard quarter,
 }
 
 template<Direction Direction>
-void generatePassiveMoves(const Quarterboard quarter,
+void generatePassiveMoves(const Quarter quarter,
                           Vec<Bitboard, 4> &moveOnes,
                           Vec<Bitboard, 4> &moveTwos)
 {
@@ -108,9 +108,9 @@ void generatePassiveMoves(const Quarterboard quarter,
 }
 
 template<Direction Direction>
-void generateAggressiveMoves(const Quarterboard quarter,
-                             Vec<Quarterboard, 4> &moveOnes,
-                             Vec<Quarterboard, 4> &moveTwos)
+void generateAggressiveMoves(const Quarter quarter,
+                             Vec<Quarter, 4> &moveOnes,
+                             Vec<Quarter, 4> &moveTwos)
 {
     Bitboard stonesLeft = quarter.own;
     while (stonesLeft)
@@ -122,7 +122,7 @@ void generateAggressiveMoves(const Quarterboard quarter,
         bool legal = isAggressiveMoveLegal<Direction>(quarter, stone);
         if (!legal) continue;
 
-        const Quarterboard aggr1 = applyAggressiveMove<Direction>(quarter, stone);
+        const Quarter aggr1 = applyAggressiveMove<Direction>(quarter, stone);
         moveOnes.add(aggr1);
 
 
@@ -131,7 +131,7 @@ void generateAggressiveMoves(const Quarterboard quarter,
         bool legal2 = isAggressiveMoveLegal<Direction>(aggr1, moveOne);
         if (!legal2) continue;
 
-        const Quarterboard aggr2 = applyAggressiveMove<Direction>(
+        const Quarter aggr2 = applyAggressiveMove<Direction>(
             aggr1,
             moveOne
         );
@@ -140,16 +140,16 @@ void generateAggressiveMoves(const Quarterboard quarter,
 }
 
 
-template<Quarter passiveBoard, Quarter aggressiveBoard>
+template<Location passiveBoard, Location aggressiveBoard>
 void combinePassiveAggressive(const State &state, std::vector<State> &states,
                               Vec<Bitboard, 4> &passiveMoveOnes,
-                              Vec<Quarterboard, 4> &aggressiveMoveOnes)
+                              Vec<Quarter, 4> &aggressiveMoveOnes)
 {
-    for (const Quarterboard &aggr: aggressiveMoveOnes)
+    for (const Quarter &aggr: aggressiveMoveOnes)
     {
         for (const Bitboard &passive: passiveMoveOnes)
         {
-            Quarterboard newPassive = {
+            Quarter newPassive = {
                 passive,
                 state.getQuarter<passiveBoard>().enemy
             };
@@ -161,7 +161,7 @@ void combinePassiveAggressive(const State &state, std::vector<State> &states,
     }
 }
 
-template<Direction Direction, Quarter passiveBoard, Quarter aggressiveBoard>
+template<Direction Direction, Location passiveBoard, Location aggressiveBoard>
 void generateMovesOnBoard(const State &state,
                           std::vector<State> &states)
 {
@@ -173,8 +173,8 @@ void generateMovesOnBoard(const State &state,
         passiveMoveTwos
     );
 
-    Vec<Quarterboard, 4> aggressiveMoveOnes = {};
-    Vec<Quarterboard, 4> aggressiveMoveTwos = {};
+    Vec<Quarter, 4> aggressiveMoveOnes = {};
+    Vec<Quarter, 4> aggressiveMoveTwos = {};
     generateAggressiveMoves<Direction>(
         state.getQuarter<aggressiveBoard>(),
         aggressiveMoveOnes,
@@ -189,10 +189,10 @@ template<Direction Direction>
 void generateMovesForDirection(const State state, std::vector<State> &states)
 {
     // Note: bottom boards are always homeboards
-    generateMovesOnBoard<Direction, Quarter::BottomLeft, Quarter::TopRight>(state, states);
-    generateMovesOnBoard<Direction, Quarter::BottomLeft, Quarter::BottomRight>(state, states);
-    generateMovesOnBoard<Direction, Quarter::BottomRight, Quarter::TopLeft>(state, states);
-    generateMovesOnBoard<Direction, Quarter::BottomRight, Quarter::BottomLeft>(state, states);
+    generateMovesOnBoard<Direction, Location::BottomLeft, Location::TopRight>(state, states);
+    generateMovesOnBoard<Direction, Location::BottomLeft, Location::BottomRight>(state, states);
+    generateMovesOnBoard<Direction, Location::BottomRight, Location::TopLeft>(state, states);
+    generateMovesOnBoard<Direction, Location::BottomRight, Location::BottomLeft>(state, states);
 }
 
 void generateAllMovesInPly(const State state, std::vector<State> &states)
