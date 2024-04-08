@@ -6,7 +6,7 @@
 template<Direction Direction>
 constexpr Bitboard move(Bitboard board);
 
-bool passiveMoveAllowed(Bitboard target,
+bool isPassiveMoveLegal(Bitboard target,
                         Bitboard ownStones,
                         Bitboard enemyStones);
 
@@ -18,20 +18,20 @@ template<Direction Direction>
 Quarter applyAggressiveMove(Quarter quarter,
                             Bitboard stone);
 
-template<Direction Direction>
+template<Direction direction>
 void generatePassiveMoves(Quarter quarter,
                           Vec<Bitboard, 4> &moveOnes,
                           Vec<Bitboard, 4> &moveTwos);
 
-template<Direction Direction>
+template<Direction direction>
 void generateAggressiveMoves(Quarter quarter,
                              Vec<Quarter, 4> &moveOnes,
                              Vec<Quarter, 4> &moveTwos);
 
-template<Direction Direction, Location passiveBoard, Location aggressiveBoard>
+template<Direction direction, Location passiveBoard, Location aggressiveBoard>
 void generateMovesOnBoard(const State &state, std::vector<State> &states);
 
-template<Direction Direction>
+template<Direction direction>
 void generateMovesForDirection(State state, std::vector<State> &states);
 
 void generateAllMovesInPly(State state, std::vector<State> &states);

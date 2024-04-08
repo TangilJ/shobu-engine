@@ -4,11 +4,11 @@
 #include "../src/engine/movegen.h"
 #include "../src/engine/consts.h"
 
-template<Direction Direction>
+template<Direction direction>
 void checkLegal(const Bitboard own, const Bitboard enemy, const Bitboard stone,
                 const Bitboard ownExpected, const Bitboard enemyExpected)
 {
-    const Quarter result = applyAggressiveMove<Direction>(
+    const Quarter result = applyAggressiveMove<direction>(
         Quarter(own, enemy), stone
     );
     CHECK((ownExpected == result.own));
@@ -16,10 +16,10 @@ void checkLegal(const Bitboard own, const Bitboard enemy, const Bitboard stone,
 }
 
 
-template<Direction Direction>
+template<Direction direction>
 void checkIllegal(const Bitboard own, const Bitboard enemy, const Bitboard stone)
 {
-    const bool legal = isAggressiveMoveLegal<Direction>(Quarter(own, enemy), stone);
+    const bool legal = isAggressiveMoveLegal<direction>(Quarter(own, enemy), stone);
 
     CHECK((!legal));
 }

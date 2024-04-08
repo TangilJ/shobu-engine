@@ -10,7 +10,7 @@
 TEST_CASE("Passive move up - one stone")
 {
     CHECK(
-        passiveMoveAllowed(
+        isPassiveMoveLegal(
             0b0000'0000'1000'0000,
             0b0000'0000'0000'1000,
             empty
