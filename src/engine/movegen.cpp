@@ -47,8 +47,8 @@ Quarterboard aggressiveMove(const Bitboard ownStones,
     const Bitboard moveTwo = move<Direction>(moveOne);
     const Bitboard blockPath = moveOne | moveTwo;
     const bool stonesInBlockPath =
-            moveTwo != empty
-            && ((ownStones | enemyStones) & blockPath) == blockPath;
+        moveTwo != empty
+        && ((ownStones | enemyStones) & blockPath) == blockPath;
 
     // Aggressive move not allowed when pushing own stone
     const bool pushingOwnStone = ownStones & moveOne;
@@ -89,7 +89,7 @@ void generatePassiveMoves(const Bitboard own,
         // First passive move
         const Bitboard moveOne = move<Direction>(stone);
         const bool allowed = passiveMoveAllowed(
-                moveOne, own, enemy
+            moveOne, own, enemy
         );
         if (!allowed)
             continue;
@@ -100,7 +100,7 @@ void generatePassiveMoves(const Bitboard own,
         // Second passive move if first move was allowed
         const Bitboard moveTwo = move<Direction>(moveOne);
         const bool allowed2 = passiveMoveAllowed(
-                moveTwo, ownAfterPassive, enemy
+            moveTwo, ownAfterPassive, enemy
         );
         if (!allowed2)
             continue;
@@ -146,19 +146,19 @@ void generateMovesOnBoard(const State &state,
     Vec<Bitboard, 4> passiveMoveOnes = {};
     Vec<Bitboard, 4> passiveMoveTwos = {};
     generatePassiveMoves<Direction>(
-            state.getQuarter<passiveBoard>().own,
-            state.getQuarter<passiveBoard>().enemy,
-            passiveMoveOnes,
-            passiveMoveTwos
+        state.getQuarter<passiveBoard>().own,
+        state.getQuarter<passiveBoard>().enemy,
+        passiveMoveOnes,
+        passiveMoveTwos
     );
 
     Vec<Quarterboard, 4> aggressiveMoveOnes = {};
     Vec<Quarterboard, 4> aggressiveMoveTwos = {};
     generateAggressiveMoves<Direction>(
-            state.getQuarter<aggressiveBoard>().own,
-            state.getQuarter<aggressiveBoard>().enemy,
-            aggressiveMoveOnes,
-            aggressiveMoveTwos
+        state.getQuarter<aggressiveBoard>().own,
+        state.getQuarter<aggressiveBoard>().enemy,
+        aggressiveMoveOnes,
+        aggressiveMoveTwos
     );
 
     for (const Quarterboard &aggr: aggressiveMoveOnes)

@@ -16,10 +16,10 @@ constexpr Bitboard empty            = 0b0000'0000'0000'0000;
 // @formatter:on
 
 constexpr State startState = {
-        {ownStartPieces,   enemyStartPieces},
-        {ownStartPieces,   enemyStartPieces},
-        {ownStartPieces,   enemyStartPieces},
-        {ownStartPieces,   enemyStartPieces}
+    {ownStartPieces, enemyStartPieces},
+    {ownStartPieces, enemyStartPieces},
+    {ownStartPieces, enemyStartPieces},
+    {ownStartPieces, enemyStartPieces}
 };
 
 #endif //SHOBU_CONSTS_H

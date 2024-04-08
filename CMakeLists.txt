@@ -31,7 +31,7 @@ set(
 add_executable(
         Shobu
         src/main.cpp
-        
+
         ${ENGINE_SOURCES}
 )
 

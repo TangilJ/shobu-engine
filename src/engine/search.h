@@ -1,5 +1,6 @@
 #ifndef SEARCH_H
 #define SEARCH_H
+
 #include "types.h"
 
 enum class Win

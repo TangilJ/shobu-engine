@@ -41,7 +41,7 @@ void timeIncreasingPerft(const int depth)
         auto end = std::chrono::steady_clock::now();
 
         auto clockDuration = std::chrono::duration_cast<std::chrono::duration
-                <double>>(end - start).count();
+            <double>>(end - start).count();
         auto nodesPerSecond = static_cast<double>(total) / clockDuration /
                               1'000'000;
 
