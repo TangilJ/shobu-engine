@@ -32,8 +32,7 @@ void checkPassiveMoves(Bitboard own,
     Vec<Bitboard, 4> moveOnes;
     Vec<Bitboard, 4> moveTwos;
     generatePassiveMoves<Direction>(
-        own,
-        enemy,
+        Quarterboard(own, enemy),
         moveOnes,
         moveTwos
     );

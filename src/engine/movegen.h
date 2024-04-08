@@ -11,24 +11,20 @@ bool passiveMoveAllowed(Bitboard target,
                         Bitboard enemyStones);
 
 template<Direction Direction>
-bool isAggressiveMoveLegal(Bitboard ownStones,
-                           Bitboard enemyStones,
+bool isAggressiveMoveLegal(Quarterboard quarter,
                            Bitboard stone);
 
 template<Direction Direction>
-Quarterboard applyAggressiveMove(Bitboard ownStones,
-                                 Bitboard enemyStones,
+Quarterboard applyAggressiveMove(Quarterboard quarter,
                                  Bitboard stone);
 
 template<Direction Direction>
-void generatePassiveMoves(Bitboard own,
-                          Bitboard enemy,
+void generatePassiveMoves(Quarterboard quarter,
                           Vec<Bitboard, 4> &moveOnes,
                           Vec<Bitboard, 4> &moveTwos);
 
 template<Direction Direction>
-void generateAggressiveMoves(Bitboard own,
-                             Bitboard enemy,
+void generateAggressiveMoves(Quarterboard quarter,
                              Vec<Quarterboard, 4> &moveOnes,
                              Vec<Quarterboard, 4> &moveTwos);
 

@@ -34,8 +34,7 @@ passiveMoveAllowed(Bitboard target, Bitboard ownStones, Bitboard enemyStones)
 }
 
 template<Direction Direction>
-bool isAggressiveMoveLegal(const Bitboard ownStones,
-                           const Bitboard enemyStones,
+bool isAggressiveMoveLegal(const Quarterboard quarter,
                            const Bitboard stone)
 {
     // Aggressive move not allowed when pushing more than 1 stone
@@ -44,10 +43,10 @@ bool isAggressiveMoveLegal(const Bitboard ownStones,
     const Bitboard blockPath = moveOne | moveTwo;
     const bool stonesInBlockPath =
         moveTwo != empty
-        && ((ownStones | enemyStones) & blockPath) == blockPath;
+        && ((quarter.own | quarter.enemy) & blockPath) == blockPath;
 
     // Aggressive move not allowed when pushing own stone
-    const bool pushingOwnStone = ownStones & moveOne;
+    const bool pushingOwnStone = quarter.own & moveOne;
 
     // Aggressive move not allowed if it would push self off board
     // move() returns 0 if pushing itself off so moveOne == 0 if on edge
@@ -57,30 +56,28 @@ bool isAggressiveMoveLegal(const Bitboard ownStones,
 }
 
 template<Direction Direction>
-Quarterboard applyAggressiveMove(const Bitboard ownStones,
-                                 const Bitboard enemyStones,
+Quarterboard applyAggressiveMove(const Quarterboard quarter,
                                  const Bitboard stone)
 {
     const Bitboard moveOne = move<Direction>(stone);
 
     // Move own stone up. Remove current stone and place it one square above
-    const Bitboard ownStonesMoved = ownStones ^ stone | moveOne;
+    const Bitboard ownStonesMoved = quarter.own ^ stone | moveOne;
 
     // Enemy stone is pushed up if it exists. If there is an enemy stone one
     // square in next square, duplicate it up and remove its previous position
-    const Bitboard enemyStonesMoved = move<Direction>(moveOne & enemyStones)
-                                      | enemyStones & ~moveOne;
+    const Bitboard enemyStonesMoved = move<Direction>(moveOne & quarter.enemy)
+                                      | quarter.enemy & ~moveOne;
 
     return {ownStonesMoved, enemyStonesMoved};
 }
 
 template<Direction Direction>
-void generatePassiveMoves(const Bitboard own,
-                          const Bitboard enemy,
+void generatePassiveMoves(const Quarterboard quarter,
                           Vec<Bitboard, 4> &moveOnes,
                           Vec<Bitboard, 4> &moveTwos)
 {
-    Bitboard stonesLeft = own;
+    Bitboard stonesLeft = quarter.own;
     while (stonesLeft)
     {
         const Bitboard stone = stonesLeft & -stonesLeft;
@@ -89,18 +86,18 @@ void generatePassiveMoves(const Bitboard own,
         // First passive move
         const Bitboard moveOne = move<Direction>(stone);
         const bool allowed = passiveMoveAllowed(
-            moveOne, own, enemy
+            moveOne, quarter.own, quarter.enemy
         );
         if (!allowed)
             continue;
 
-        Bitboard ownAfterPassive = own ^ stone | moveOne;
+        Bitboard ownAfterPassive = quarter.own ^ stone | moveOne;
         moveOnes.add(ownAfterPassive);
 
         // Second passive move if first move was allowed
         const Bitboard moveTwo = move<Direction>(moveOne);
         const bool allowed2 = passiveMoveAllowed(
-            moveTwo, ownAfterPassive, enemy
+            moveTwo, ownAfterPassive, quarter.enemy
         );
         if (!allowed2)
             continue;
@@ -111,33 +108,31 @@ void generatePassiveMoves(const Bitboard own,
 }
 
 template<Direction Direction>
-void generateAggressiveMoves(const Bitboard own,
-                             const Bitboard enemy,
+void generateAggressiveMoves(const Quarterboard quarter,
                              Vec<Quarterboard, 4> &moveOnes,
                              Vec<Quarterboard, 4> &moveTwos)
 {
-    Bitboard stonesLeft = own;
+    Bitboard stonesLeft = quarter.own;
     while (stonesLeft)
     {
         const Bitboard stone = stonesLeft & -stonesLeft;
         stonesLeft ^= stone;
 
         // First aggressive move
-        bool legal = isAggressiveMoveLegal<Direction>(own, enemy, stone);
+        bool legal = isAggressiveMoveLegal<Direction>(quarter, stone);
         if (!legal) continue;
 
-        const Quarterboard aggr1 = applyAggressiveMove<Direction>(own, enemy, stone);
+        const Quarterboard aggr1 = applyAggressiveMove<Direction>(quarter, stone);
         moveOnes.add(aggr1);
 
 
         // Second aggressive move if first move was allowed
         const Bitboard moveOne = move<Direction>(stone);
-        bool legal2 = isAggressiveMoveLegal<Direction>(aggr1.own, aggr1.enemy, moveOne);
+        bool legal2 = isAggressiveMoveLegal<Direction>(aggr1, moveOne);
         if (!legal2) continue;
 
         const Quarterboard aggr2 = applyAggressiveMove<Direction>(
-            aggr1.own,
-            aggr1.enemy,
+            aggr1,
             moveOne
         );
         moveTwos.add(aggr2);
@@ -173,8 +168,7 @@ void generateMovesOnBoard(const State &state,
     Vec<Bitboard, 4> passiveMoveOnes = {};
     Vec<Bitboard, 4> passiveMoveTwos = {};
     generatePassiveMoves<Direction>(
-        state.getQuarter<passiveBoard>().own,
-        state.getQuarter<passiveBoard>().enemy,
+        state.getQuarter<passiveBoard>(),
         passiveMoveOnes,
         passiveMoveTwos
     );
@@ -182,8 +176,7 @@ void generateMovesOnBoard(const State &state,
     Vec<Quarterboard, 4> aggressiveMoveOnes = {};
     Vec<Quarterboard, 4> aggressiveMoveTwos = {};
     generateAggressiveMoves<Direction>(
-        state.getQuarter<aggressiveBoard>().own,
-        state.getQuarter<aggressiveBoard>().enemy,
+        state.getQuarter<aggressiveBoard>(),
         aggressiveMoveOnes,
         aggressiveMoveTwos
     );
