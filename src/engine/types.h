@@ -20,7 +20,7 @@ struct Quarter
     Bitboard own;
     Bitboard enemy;
 
-    bool operator==(const Quarter &rhs) const
+    bool operator ==(const Quarter &rhs) const
     {
         return own == rhs.own &&
                enemy == rhs.enemy;
@@ -80,7 +80,7 @@ struct State
 
     }
 
-    bool operator==(const State &rhs) const
+    bool operator ==(const State &rhs) const
     {
         return topLeft == rhs.topLeft &&
                topRight == rhs.topRight &&
@@ -97,7 +97,7 @@ private:
     std::array<T, maxSize> array{};
 
 public:
-    T operator[](const int i) const
+    T operator [](const int i) const
     {
         return array[i];
     }
