@@ -27,24 +27,24 @@ struct Quarter
     }
 };
 
-enum class Location
+enum class Location : int
 {
-    TopLeft,
-    TopRight,
-    BottomLeft,
-    BottomRight
+    TopLeft = 0,
+    TopRight = 1,
+    BottomLeft = 2,
+    BottomRight = 3
 };
 
-enum class Direction
+enum class Direction : int
 {
-    Up,
-    UpRight,
-    Right,
-    DownRight,
-    Down,
-    DownLeft,
-    Left,
-    UpLeft
+    Up = 0,
+    UpRight = 1,
+    Right = 2,
+    DownRight = 3,
+    Down = 4,
+    DownLeft = 5,
+    Left = 6,
+    UpLeft = 7
 };
 
 struct Board
@@ -71,9 +71,9 @@ struct Board
     {
         // @formatter:off
         return Board{
-            location == Location::TopLeft     ? quarterboard : topLeft,
-            location == Location::TopRight    ? quarterboard : topRight,
-            location == Location::BottomLeft  ? quarterboard : bottomLeft,
+            location == Location::TopLeft         ? quarterboard : topLeft,
+            location == Location::TopRight       ? quarterboard : topRight,
+            location == Location::BottomLeft   ? quarterboard : bottomLeft,
             location == Location::BottomRight ? quarterboard : bottomRight,
         };
         // @formatter:on
@@ -97,7 +97,7 @@ private:
     static constexpr int MAX_SIZE = 4;
     // Cannot have more than 4 stones, so max 4 moves
     std::array<T, MAX_SIZE> array{};
-    std::array<Bitboard, MAX_SIZE> source{};
+    std::array<int, MAX_SIZE> sourceIdxs{};
 
 public:
     T operator [](const int i) const
@@ -105,16 +105,16 @@ public:
         return array[i];
     }
 
-    Bitboard getSource(const int i) const
+    Bitboard getSourceIndex(const int i) const
     {
-        return source[i];
+        return sourceIdxs[i];
     }
 
-    auto add(const T &x, const Bitboard &s)
+    auto add(const T &x, const int &s)
     {
         assert(len <= MAX_SIZE);
         array[len] = x;
-        source[len] = s;
+        sourceIdxs[len] = s;
         len++;
     }
 
@@ -134,12 +134,26 @@ public:
     }
 };
 
+enum class PassiveSide : int
+{
+    Left = 0,
+    Right = 1
+};
+
+enum class AggressiveSide : int
+{
+    Top = 0,
+    Bottom = 1
+};
+
 struct Move
 {
-    Bitboard passiveSource;
-    Bitboard aggressiveSource;
+    int passiveSourceIndex; // E.g. 0b0001'0000'0000'0000 -> 3
+    int aggressiveSourceIndex;
+    PassiveSide passiveSide;
+    AggressiveSide aggressiveSide;
     Direction direction;
-    int times;
+    int timesMoved;
 };
 
 struct State

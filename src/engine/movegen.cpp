@@ -1,4 +1,5 @@
 #include <iostream>
+#include <intrin.h>
 #include "types.h"
 #include "consts.h"
 #include "print.h"
@@ -93,7 +94,8 @@ void generatePassiveMoves(const Quarter quarter,
             continue;
 
         Bitboard ownAfterPassive = quarter.own ^ stone | moveOne;
-        moveOnes.add(ownAfterPassive, stone);
+        int sourceStoneIndex = 15 - _tzcnt_u16(stone);
+        moveOnes.add(ownAfterPassive, sourceStoneIndex);
 
         // Second passive move if first move was allowed
         const Bitboard moveTwo = move<direction>(moveOne);
@@ -104,7 +106,7 @@ void generatePassiveMoves(const Quarter quarter,
             continue;
 
         Bitboard ownAfterPassive2 = ownAfterPassive ^ moveOne | moveTwo;
-        moveTwos.add(ownAfterPassive2, stone);
+        moveTwos.add(ownAfterPassive2, sourceStoneIndex);
     }
 }
 
@@ -124,7 +126,8 @@ void generateAggressiveMoves(const Quarter quarter,
         if (!legal) continue;
 
         const Quarter aggr1 = applyAggressiveMove<direction>(quarter, stone);
-        moveOnes.add(aggr1, stone);
+        int sourceStoneIndex = 15 - _tzcnt_u16(stone);
+        moveOnes.add(aggr1, sourceStoneIndex);
 
 
         // Second aggressive move if first move was allowed
@@ -136,7 +139,7 @@ void generateAggressiveMoves(const Quarter quarter,
             aggr1,
             moveOne
         );
-        moveTwos.add(aggr2, stone);
+        moveTwos.add(aggr2, sourceStoneIndex);
     }
 }
 
@@ -159,8 +162,10 @@ void combinePassiveAggressive(const Board &board,
             Board newBoard = board.setQuarter<passiveBoard>(newPassive);
             newBoard = newBoard.setQuarter<aggressiveBoard>(aggressiveMoves[i]);
             Move move = {
-                passiveMoves.getSource(j),
-                aggressiveMoves.getSource(i),
+                passiveMoves.getSourceIndex(j),
+                aggressiveMoves.getSourceIndex(i),
+                passiveBoard == Location::BottomLeft ? PassiveSide::Left : PassiveSide::Right,
+                aggressiveBoard == Location::TopLeft ? AggressiveSide::Top : AggressiveSide::Bottom,
                 direction,
                 times
             };
