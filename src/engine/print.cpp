@@ -35,13 +35,13 @@ void print(const Bitboard board)
 }
 
 // Own homeboards are bottom 2 boards, enemy homeboards are top 2 boards
-void print(const State state)
+void print(const Board board)
 {
-    printTwoBoards(state.topLeft.own, state.topRight.own,
-                   state.topLeft.enemy, state.topRight.enemy);
+    printTwoBoards(board.topLeft.own, board.topRight.own,
+                   board.topLeft.enemy, board.topRight.enemy);
     std::cout << std::endl;
-    printTwoBoards(state.bottomLeft.own, state.bottomRight.own,
-                   state.bottomLeft.enemy, state.bottomRight.enemy);
+    printTwoBoards(board.bottomLeft.own, board.bottomRight.own,
+                   board.bottomLeft.enemy, board.bottomRight.enemy);
     std::cout << std::endl;
 }
 

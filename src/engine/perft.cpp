@@ -8,22 +8,22 @@
 #include "search.h"
 #include "types.h"
 
-uint64_t perft(const State state, const int depth)
+uint64_t perft(const Board board, const int depth)
 {
-    if (depth == 0 || checkWin(state) != Win::GameOngoing)
+    if (depth == 0 || checkWin(board) != Win::GameOngoing)
         return 1;
 
-    std::vector<State> states;
-    states.reserve(250);
+    std::vector<Board> boards;
+    boards.reserve(250);
 
-    generateAllMovesInPly(state, states);
+    generateAllMovesInPly(board, boards);
 
     uint64_t total = 0;
-    for (int i = 0; i < states.size(); ++i)
+    for (int i = 0; i < boards.size(); ++i)
     {
-        State reversedPlayers = {
-            state.bottomRight, state.bottomLeft,
-            state.topRight, state.topLeft
+        Board reversedPlayers = {
+            board.bottomRight, board.bottomLeft,
+            board.topRight, board.topLeft
         };
 
         total += perft(reversedPlayers, depth - 1);

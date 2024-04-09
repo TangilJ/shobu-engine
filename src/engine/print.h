@@ -10,7 +10,7 @@ void printBits(Bitboard board);
 
 void print(Bitboard board);
 
-void print(State board);
+void print(Board board);
 
 void printTwoBoards(Quarter boards);
 

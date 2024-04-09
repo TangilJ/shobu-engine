@@ -10,6 +10,6 @@ enum class Win
     GameOngoing
 };
 
-Win checkWin(State state);
+Win checkWin(Board board);
 
 #endif //SEARCH_H

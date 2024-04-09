@@ -29,11 +29,11 @@ void generateAggressiveMoves(Quarter quarter,
                              Vec<Quarter, 4> &moveTwos);
 
 template<Direction direction, Location passiveBoard, Location aggressiveBoard>
-void generateMovesOnBoard(const State &state, std::vector<State> &states);
+void generateMovesOnBoard(const Board &board, std::vector<Board> &boards);
 
 template<Direction direction>
-void generateMovesForDirection(State state, std::vector<State> &states);
+void generateMovesForDirection(Board board, std::vector<Board> &boards);
 
-void generateAllMovesInPly(State state, std::vector<State> &states);
+void generateAllMovesInPly(Board board, std::vector<Board> &boards);
 
 #endif //SHOBU_MOVEGEN_H

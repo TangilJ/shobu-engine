@@ -13,7 +13,7 @@ constexpr Bitboard right            = 0b0001'0001'0001'0001;
 constexpr Bitboard empty            = 0b0000'0000'0000'0000;
 // @formatter:on
 
-constexpr State startState = {
+constexpr Board startState = {
     {ownStartPieces, enemyStartPieces},
     {ownStartPieces, enemyStartPieces},
     {ownStartPieces, enemyStartPieces},

@@ -47,7 +47,7 @@ enum class Direction
     UpLeft
 };
 
-struct State
+struct Board
 {
     Quarter topLeft;
     Quarter topRight;
@@ -67,10 +67,10 @@ struct State
     }
 
     template<Location location>
-    constexpr State setQuarter(const Quarter quarterboard) const
+    constexpr Board setQuarter(const Quarter quarterboard) const
     {
         // @formatter:off
-        return State{
+        return Board{
             location == Location::TopLeft     ? quarterboard : topLeft,
             location == Location::TopRight    ? quarterboard : topRight,
             location == Location::BottomLeft  ? quarterboard : bottomLeft,
@@ -80,7 +80,7 @@ struct State
 
     }
 
-    bool operator ==(const State &rhs) const
+    bool operator ==(const Board &rhs) const
     {
         return topLeft == rhs.topLeft &&
                topRight == rhs.topRight &&

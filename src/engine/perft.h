@@ -5,7 +5,7 @@
 
 #include "types.h"
 
-uint64_t perft(State state, int depth);
+uint64_t perft(Board board, int depth);
 
 void timeIncreasingPerft(int depth);
 
