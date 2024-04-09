@@ -75,8 +75,8 @@ Quarter applyAggressiveMove(const Quarter quarter,
 
 template<Direction direction>
 void generatePassiveMoves(const Quarter quarter,
-                          Vec<Bitboard, 4> &moveOnes,
-                          Vec<Bitboard, 4> &moveTwos)
+                          Moves<Bitboard> &moveOnes,
+                          Moves<Bitboard> &moveTwos)
 {
     Bitboard stonesLeft = quarter.own;
     while (stonesLeft)
@@ -110,8 +110,8 @@ void generatePassiveMoves(const Quarter quarter,
 
 template<Direction direction>
 void generateAggressiveMoves(const Quarter quarter,
-                             Vec<Quarter, 4> &moveOnes,
-                             Vec<Quarter, 4> &moveTwos)
+                             Moves<Quarter> &moveOnes,
+                             Moves<Quarter> &moveTwos)
 {
     Bitboard stonesLeft = quarter.own;
     while (stonesLeft)
@@ -142,10 +142,10 @@ void generateAggressiveMoves(const Quarter quarter,
 
 
 template<Location passiveBoard, Location aggressiveBoard>
-void combinePassiveAggressive(const Board &board, 
+void combinePassiveAggressive(const Board &board,
                               std::vector<Board> &boards,
-                              Vec<Bitboard, 4> &passiveMoveOnes,
-                              Vec<Quarter, 4> &aggressiveMoveOnes)
+                              Moves<Bitboard> &passiveMoveOnes,
+                              Moves<Quarter> &aggressiveMoveOnes)
 {
     for (const Quarter &aggr: aggressiveMoveOnes)
     {
@@ -167,16 +167,16 @@ template<Direction direction, Location passiveBoard, Location aggressiveBoard>
 void generateMovesOnBoard(const Board &board,
                           std::vector<Board> &boards)
 {
-    Vec<Bitboard, 4> passiveMoveOnes = {};
-    Vec<Bitboard, 4> passiveMoveTwos = {};
+    Moves<Bitboard> passiveMoveOnes = {};
+    Moves<Bitboard> passiveMoveTwos = {};
     generatePassiveMoves<direction>(
         board.getQuarter<passiveBoard>(),
         passiveMoveOnes,
         passiveMoveTwos
     );
 
-    Vec<Quarter, 4> aggressiveMoveOnes = {};
-    Vec<Quarter, 4> aggressiveMoveTwos = {};
+    Moves<Quarter> aggressiveMoveOnes = {};
+    Moves<Quarter> aggressiveMoveTwos = {};
     generateAggressiveMoves<direction>(
         board.getQuarter<aggressiveBoard>(),
         aggressiveMoveOnes,

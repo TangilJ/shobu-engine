@@ -89,12 +89,14 @@ struct Board
     }
 };
 
-template<typename T, size_t maxSize>
-struct Vec
+template<typename T>
+struct Moves
 {
 private:
     unsigned short len = 0;
-    std::array<T, maxSize> array{};
+    static constexpr int MAX_SIZE = 4;
+    // Cannot have more than 4 stones, so max 4 moves
+    std::array<T, MAX_SIZE> array{};
 
 public:
     T operator [](const int i) const
@@ -104,7 +106,7 @@ public:
 
     auto add(const T &x)
     {
-        assert(len <= maxSize);
+        assert(len <= MAX_SIZE);
         array[len] = x;
         len++;
     }

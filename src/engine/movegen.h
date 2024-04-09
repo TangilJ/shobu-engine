@@ -20,13 +20,13 @@ Quarter applyAggressiveMove(Quarter quarter,
 
 template<Direction direction>
 void generatePassiveMoves(Quarter quarter,
-                          Vec<Bitboard, 4> &moveOnes,
-                          Vec<Bitboard, 4> &moveTwos);
+                          Moves<Bitboard> &moveOnes,
+                          Moves<Bitboard> &moveTwos);
 
 template<Direction direction>
 void generateAggressiveMoves(Quarter quarter,
-                             Vec<Quarter, 4> &moveOnes,
-                             Vec<Quarter, 4> &moveTwos);
+                             Moves<Quarter> &moveOnes,
+                             Moves<Quarter> &moveTwos);
 
 template<Direction direction, Location passiveBoard, Location aggressiveBoard>
 void generateMovesOnBoard(const Board &board, std::vector<Board> &boards);

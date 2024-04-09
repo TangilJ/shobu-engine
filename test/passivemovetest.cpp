@@ -18,7 +18,7 @@ TEST_CASE("Passive move up - one stone")
     );
 }
 
-static void checkContains(Vec<Bitboard, 4> &moveOnes, Bitboard b)
+static void checkContains(Moves<Bitboard> &moveOnes, Bitboard b)
 {
     CHECK((std::find(moveOnes.begin(), moveOnes.end(), b) != moveOnes.end()));
 }
@@ -29,8 +29,8 @@ void checkPassiveMoves(Bitboard own,
                        const std::vector<Bitboard> &expectedOnes,
                        const std::vector<Bitboard> &expectedTwos)
 {
-    Vec<Bitboard, 4> moveOnes;
-    Vec<Bitboard, 4> moveTwos;
+    Moves<Bitboard> moveOnes;
+    Moves<Bitboard> moveTwos;
     generatePassiveMoves<Direction>(
         Quarter(own, enemy),
         moveOnes,
