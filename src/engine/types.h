@@ -97,17 +97,24 @@ private:
     static constexpr int MAX_SIZE = 4;
     // Cannot have more than 4 stones, so max 4 moves
     std::array<T, MAX_SIZE> array{};
+    std::array<Bitboard, MAX_SIZE> source{};
 
 public:
     T operator [](const int i) const
     {
         return array[i];
     }
+    
+    Bitboard getSource(const int i) const
+    {
+        return source[i];
+    }
 
-    auto add(const T &x)
+    auto add(const T &x, const Bitboard &s)
     {
         assert(len <= MAX_SIZE);
         array[len] = x;
+        source[len] = s;
         len++;
     }
 

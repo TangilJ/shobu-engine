@@ -93,7 +93,7 @@ void generatePassiveMoves(const Quarter quarter,
             continue;
 
         Bitboard ownAfterPassive = quarter.own ^ stone | moveOne;
-        moveOnes.add(ownAfterPassive);
+        moveOnes.add(ownAfterPassive, stone);
 
         // Second passive move if first move was allowed
         const Bitboard moveTwo = move<direction>(moveOne);
@@ -104,7 +104,7 @@ void generatePassiveMoves(const Quarter quarter,
             continue;
 
         Bitboard ownAfterPassive2 = ownAfterPassive ^ moveOne | moveTwo;
-        moveTwos.add(ownAfterPassive2);
+        moveTwos.add(ownAfterPassive2, stone);
     }
 }
 
@@ -124,7 +124,7 @@ void generateAggressiveMoves(const Quarter quarter,
         if (!legal) continue;
 
         const Quarter aggr1 = applyAggressiveMove<direction>(quarter, stone);
-        moveOnes.add(aggr1);
+        moveOnes.add(aggr1, stone);
 
 
         // Second aggressive move if first move was allowed
@@ -136,7 +136,7 @@ void generateAggressiveMoves(const Quarter quarter,
             aggr1,
             moveOne
         );
-        moveTwos.add(aggr2);
+        moveTwos.add(aggr2, stone);
     }
 }
 
