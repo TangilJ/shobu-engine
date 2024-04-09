@@ -104,7 +104,7 @@ public:
     {
         return array[i];
     }
-    
+
     Bitboard getSource(const int i) const
     {
         return source[i];
@@ -134,5 +134,18 @@ public:
     }
 };
 
+struct Move
+{
+    Bitboard passiveSource;
+    Bitboard aggressiveSource;
+    Direction direction;
+    int times;
+};
+
+struct State
+{
+    Board board;
+    Move move; // Move that led to this state
+};
 
 #endif //SHOBU_TYPES_H

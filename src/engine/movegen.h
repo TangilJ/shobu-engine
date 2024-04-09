@@ -3,9 +3,6 @@
 
 #include "types.h"
 
-template<Direction Direction>
-constexpr Bitboard move(Bitboard board);
-
 bool isPassiveMoveLegal(Bitboard target,
                         Bitboard ownStones,
                         Bitboard enemyStones);
@@ -24,16 +21,8 @@ void generatePassiveMoves(Quarter quarter,
                           Moves<Bitboard> &moveTwos);
 
 template<Direction direction>
-void generateAggressiveMoves(Quarter quarter,
-                             Moves<Quarter> &moveOnes,
-                             Moves<Quarter> &moveTwos);
+void generateMovesForDirection(Board board, std::vector<State> &states);
 
-template<Direction direction, Location passiveBoard, Location aggressiveBoard>
-void generateMovesOnBoard(const Board &board, std::vector<Board> &boards);
-
-template<Direction direction>
-void generateMovesForDirection(Board board, std::vector<Board> &boards);
-
-void generateAllMovesInPly(Board board, std::vector<Board> &boards);
+void generateAllMovesInPly(Board board, std::vector<State> &states);
 
 #endif //SHOBU_MOVEGEN_H

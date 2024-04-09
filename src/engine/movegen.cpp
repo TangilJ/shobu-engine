@@ -141,31 +141,38 @@ void generateAggressiveMoves(const Quarter quarter,
 }
 
 
-template<Location passiveBoard, Location aggressiveBoard>
+template<Direction direction, int times, Location passiveBoard, Location aggressiveBoard>
 void combinePassiveAggressive(const Board &board,
-                              std::vector<Board> &boards,
-                              Moves<Bitboard> &passiveMoveOnes,
-                              Moves<Quarter> &aggressiveMoveOnes)
+                              std::vector<State> &states,
+                              Moves<Bitboard> &passiveMoves,
+                              Moves<Quarter> &aggressiveMoves)
 {
-    for (const Quarter &aggr: aggressiveMoveOnes)
+    for (int i = 0; i < aggressiveMoves.size(); ++i)
     {
-        for (const Bitboard &passive: passiveMoveOnes)
+        for (int j = 0; j < passiveMoves.size(); ++j)
         {
             Quarter newPassive = {
-                passive,
+                passiveMoves[j],
                 board.getQuarter<passiveBoard>().enemy
             };
 
-            Board newState = board.setQuarter<passiveBoard>(newPassive);
-            newState = newState.setQuarter<aggressiveBoard>(aggr);
-            boards.push_back(newState);
+            Board newBoard = board.setQuarter<passiveBoard>(newPassive);
+            newBoard = newBoard.setQuarter<aggressiveBoard>(aggressiveMoves[i]);
+            Move move = {
+                passiveMoves.getSource(j),
+                aggressiveMoves.getSource(i),
+                direction,
+                times
+            };
+
+            states.push_back({newBoard, move});
         }
     }
 }
 
 template<Direction direction, Location passiveBoard, Location aggressiveBoard>
 void generateMovesOnBoard(const Board &board,
-                          std::vector<Board> &boards)
+                          std::vector<State> &states)
 {
     Moves<Bitboard> passiveMoveOnes = {};
     Moves<Bitboard> passiveMoveTwos = {};
@@ -183,36 +190,34 @@ void generateMovesOnBoard(const Board &board,
         aggressiveMoveTwos
     );
 
-    combinePassiveAggressive<passiveBoard, aggressiveBoard>(
-        board, boards,
-        passiveMoveOnes, aggressiveMoveOnes
+    combinePassiveAggressive<direction, 1, passiveBoard, aggressiveBoard>(
+        board, states, passiveMoveOnes, aggressiveMoveOnes
     );
-    combinePassiveAggressive<passiveBoard, aggressiveBoard>(
-        board, boards,
-        passiveMoveTwos, aggressiveMoveTwos
+    combinePassiveAggressive<direction, 2, passiveBoard, aggressiveBoard>(
+        board, states, passiveMoveTwos, aggressiveMoveTwos
     );
 }
 
 template<Direction direction>
 void generateMovesForDirection(const Board board,
-                               std::vector<Board> &boards)
+                               std::vector<State> &states)
 {
-    // Note: bottom boards are always homeboards
-    generateMovesOnBoard<direction, Location::BottomLeft, Location::TopRight>(board, boards);
-    generateMovesOnBoard<direction, Location::BottomLeft, Location::BottomRight>(board, boards);
-    generateMovesOnBoard<direction, Location::BottomRight, Location::TopLeft>(board, boards);
-    generateMovesOnBoard<direction, Location::BottomRight, Location::BottomLeft>(board, boards);
+    // Note: bottom states are always homeboards
+    generateMovesOnBoard<direction, Location::BottomLeft, Location::TopRight>(board, states);
+    generateMovesOnBoard<direction, Location::BottomLeft, Location::BottomRight>(board, states);
+    generateMovesOnBoard<direction, Location::BottomRight, Location::TopLeft>(board, states);
+    generateMovesOnBoard<direction, Location::BottomRight, Location::BottomLeft>(board, states);
 }
 
 void generateAllMovesInPly(const Board board,
-                           std::vector<Board> &boards)
+                           std::vector<State> &states)
 {
-    generateMovesForDirection<Direction::Up>(board, boards);
-    generateMovesForDirection<Direction::UpRight>(board, boards);
-    generateMovesForDirection<Direction::Right>(board, boards);
-    generateMovesForDirection<Direction::DownRight>(board, boards);
-    generateMovesForDirection<Direction::Down>(board, boards);
-    generateMovesForDirection<Direction::DownLeft>(board, boards);
-    generateMovesForDirection<Direction::Left>(board, boards);
-    generateMovesForDirection<Direction::UpLeft>(board, boards);
+    generateMovesForDirection<Direction::Up>(board, states);
+    generateMovesForDirection<Direction::UpRight>(board, states);
+    generateMovesForDirection<Direction::Right>(board, states);
+    generateMovesForDirection<Direction::DownRight>(board, states);
+    generateMovesForDirection<Direction::Down>(board, states);
+    generateMovesForDirection<Direction::DownLeft>(board, states);
+    generateMovesForDirection<Direction::Left>(board, states);
+    generateMovesForDirection<Direction::UpLeft>(board, states);
 }

@@ -3,9 +3,14 @@
 #include "../src/engine/movegen.h"
 #include "../src/engine/consts.h"
 
-static void checkContains(std::vector<Board> &states, Board state)
+static void checkContains(std::vector<State> &states, Board state)
 {
-    CHECK((std::find(states.begin(), states.end(), state) != states.end()));
+    CHECK(
+        (std::ranges::any_of(
+            states,
+            [state](const State &s) { return s.board == state; }
+        ))
+    );
 }
 
 TEST_CASE("generateMovesForDirection - up two moves")
@@ -17,7 +22,7 @@ TEST_CASE("generateMovesForDirection - up two moves")
         {0b0000'0000'0000'0010, 0b0100'0000'0000'0000}
     };
 
-    std::vector<Board> states;
+    std::vector<State> states;
     generateMovesForDirection<Direction::Up>(state, states);
 
     CHECK((states.size() == 8));
@@ -32,7 +37,7 @@ TEST_CASE("generateMovesForDirection - down left pushing")
         {0b0000'0010'0000'0000, 0b0000'0000'0100'0000},
     };
 
-    std::vector<Board> states;
+    std::vector<State> states;
     generateMovesForDirection<Direction::DownLeft>(state, states);
 
     CHECK((states.size() == 3));
@@ -65,7 +70,7 @@ TEST_CASE("generateAllMovesInPly")
         {0b0000'0000'0000'0001, 0b0100'0000'0000'0000}
     };
 
-    std::vector<Board> states;
+    std::vector<State> states;
     generateAllMovesInPly(state, states);
 
     CHECK((states.size() == 26));

@@ -13,13 +13,13 @@ uint64_t perft(const Board board, const int depth)
     if (depth == 0 || checkWin(board) != Win::GameOngoing)
         return 1;
 
-    std::vector<Board> boards;
-    boards.reserve(250);
+    std::vector<State> states;
+    states.reserve(250);
 
-    generateAllMovesInPly(board, boards);
+    generateAllMovesInPly(board, states);
 
     uint64_t total = 0;
-    for (int i = 0; i < boards.size(); ++i)
+    for (int i = 0; i < states.size(); ++i)
     {
         Board reversedPlayers = {
             board.bottomRight, board.bottomLeft,
