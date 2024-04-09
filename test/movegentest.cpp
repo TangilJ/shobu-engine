@@ -1,4 +1,5 @@
 #include <doctest/doctest.h>
+#include <algorithm>
 #include "../src/engine/movegen.h"
 #include "../src/engine/consts.h"
 
