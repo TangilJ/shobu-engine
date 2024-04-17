@@ -29,12 +29,17 @@ set(
         src/engine/search.h
 )
 
+add_library(
+        ShobuEngine
+        ${ENGINE_SOURCES}
+)
+target_include_directories(ShobuEngine INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+
 add_executable(
         Shobu
         src/main.cpp
-
-        ${ENGINE_SOURCES}
 )
+target_link_libraries(Shobu ShobuEngine)
 
 
 # Tests only run on Debug mode
@@ -46,6 +51,7 @@ add_executable(
         test/movegentest.cpp
 
         ${ENGINE_SOURCES}
+        # Adding engine sources directly because required template functions are
+        # not compiled in a library
 )
-target_compile_definitions(ShobuTests PRIVATE STANDALONE_TESTS)
 target_link_libraries(ShobuTests doctest)
