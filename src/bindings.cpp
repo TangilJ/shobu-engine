@@ -49,6 +49,16 @@ PYBIND11_MODULE(engine, m)
         .value("Top", AggressiveSide::Top)
         .value("Bottom", AggressiveSide::Bottom);
 
+    py::enum_<Direction>(m, "Direction")
+        .value("Up", Direction::Up)
+        .value("UpRight", Direction::UpRight)
+        .value("Right", Direction::Right)
+        .value("DownRight", Direction::DownRight)
+        .value("Down", Direction::Down)
+        .value("DownLeft", Direction::DownLeft)
+        .value("Left", Direction::Left)
+        .value("UpLeft", Direction::UpLeft);
+
     py::class_<Move>(m, "Move")
         .def_readonly("passiveSourceIndex", &Move::passiveSourceIndex)
         .def_readonly("aggressiveSourceIndex", &Move::aggressiveSourceIndex)
@@ -66,7 +76,7 @@ PYBIND11_MODULE(engine, m)
         &getNextStates,
         "Get successor states given a board state."
     );
-    
+
     m.def(
         "to_bit_string",
         &toBitString,
