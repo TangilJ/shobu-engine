@@ -29,11 +29,13 @@ set(
         src/engine/search.h
 )
 
+
 add_library(
         ShobuEngine
         ${ENGINE_SOURCES}
 )
 target_include_directories(ShobuEngine INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+
 
 add_executable(
         Shobu
@@ -55,3 +57,8 @@ add_executable(
         # not compiled in a library
 )
 target_link_libraries(ShobuTests doctest)
+
+
+add_subdirectory(extern/pybind11)
+pybind11_add_module(engine src/bindings.cpp)
+target_link_libraries(engine PRIVATE ShobuEngine)
