@@ -25,4 +25,6 @@ void generateMovesForDirection(Board board, std::vector<State> &states);
 
 void generateAllMovesInPly(Board board, std::vector<State> &states);
 
+Board reverseBoard(const Board &board);
+
 #endif //SHOBU_MOVEGEN_H

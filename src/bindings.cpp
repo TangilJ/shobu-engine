@@ -78,6 +78,12 @@ PYBIND11_MODULE(engine, m)
     );
 
     m.def(
+        "reverse_board",
+        &reverseBoard,
+        "Swap the sides of the board."
+    );
+
+    m.def(
         "to_bit_string",
         &toBitString,
         "Convert a bitboard to a string representation."

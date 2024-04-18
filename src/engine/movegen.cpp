@@ -226,3 +226,11 @@ void generateAllMovesInPly(const Board board,
     generateMovesForDirection<Direction::Left>(board, states);
     generateMovesForDirection<Direction::UpLeft>(board, states);
 }
+
+Board reverseBoard(const Board &board)
+{
+    return {
+        board.bottomRight, board.bottomLeft,
+        board.topRight, board.topLeft
+    };
+}

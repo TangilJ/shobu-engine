@@ -20,14 +20,10 @@ uint64_t perft(const Board board, const int depth)
 
     uint64_t total = 0;
     for (int i = 0; i < states.size(); ++i)
-    {
-        Board reversedPlayers = {
-            board.bottomRight, board.bottomLeft,
-            board.topRight, board.topLeft
-        };
-
-        total += perft(reversedPlayers, depth - 1);
-    }
+        total += perft(
+            reverseBoard(board),
+            depth - 1
+        );
 
     return total;
 }
