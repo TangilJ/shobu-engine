@@ -10,14 +10,18 @@
 #include <pybind11/stl.h>
 #include "engine/movegen.h"
 #include "engine/print.h"
+#include "engine/search.h"
 
 namespace py = pybind11;
 
 std::vector<State> getNextStates(const Board &board)
 {
     std::vector<State> states;
-    states.reserve(250);
 
+    if (checkWin(board) != Win::GameOngoing)
+        return states;
+
+    states.reserve(250);
     generateAllMovesInPly(board, states);
 
     return states;
