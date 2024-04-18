@@ -38,10 +38,10 @@ PYBIND11_MODULE(engine, m)
 
     py::class_<Board>(m, "Board")
         .def(py::init<Quarter, Quarter, Quarter, Quarter>())
-        .def_readonly("topLeft", &Board::topLeft)
-        .def_readonly("topRight", &Board::topRight)
-        .def_readonly("bottomLeft", &Board::bottomLeft)
-        .def_readonly("bottomRight", &Board::bottomRight)
+        .def_readonly("top_left", &Board::topLeft)
+        .def_readonly("top_right", &Board::topRight)
+        .def_readonly("bottom_left", &Board::bottomLeft)
+        .def_readonly("bottom_right", &Board::bottomRight)
         .def("__eq__", &Board::operator ==);
 
     py::enum_<PassiveSide>(m, "PassiveSide")
@@ -63,12 +63,12 @@ PYBIND11_MODULE(engine, m)
         .value("UpLeft", Direction::UpLeft);
 
     py::class_<Move>(m, "Move")
-        .def_readonly("passiveSourceIndex", &Move::passiveSourceIndex)
-        .def_readonly("aggressiveSourceIndex", &Move::aggressiveSourceIndex)
-        .def_readonly("passiveSide", &Move::passiveSide)
-        .def_readonly("aggressiveSide", &Move::aggressiveSide)
+        .def_readonly("passive_source_index", &Move::passiveSourceIndex)
+        .def_readonly("aggressive_source_index", &Move::aggressiveSourceIndex)
+        .def_readonly("passive_side", &Move::passiveSide)
+        .def_readonly("aggressive_side", &Move::aggressiveSide)
         .def_readonly("direction", &Move::direction)
-        .def_readonly("timesMoved", &Move::timesMoved);
+        .def_readonly("times_moved", &Move::timesMoved);
 
     py::class_<State>(m, "State")
         .def_readwrite("board", &State::board)
