@@ -5,7 +5,6 @@
 
 #include "consts.h"
 #include "movegen.h"
-#include "search.h"
 #include "types.h"
 
 uint64_t perft(const Board board, const int depth)

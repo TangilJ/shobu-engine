@@ -25,8 +25,6 @@ set(
         src/engine/consts.h
         src/engine/perft.cpp
         src/engine/perft.h
-        src/engine/search.cpp
-        src/engine/search.h
 )
 
 

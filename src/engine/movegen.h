@@ -27,4 +27,6 @@ void generateAllMovesInPly(Board board, std::vector<State> &states);
 
 Board reverseBoard(const Board &board);
 
+Win checkWin(Board board);
+
 #endif //SHOBU_MOVEGEN_H

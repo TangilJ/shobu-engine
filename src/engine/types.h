@@ -156,6 +156,13 @@ struct Move
     int timesMoved;
 };
 
+enum class Win
+{
+    OwnWin,
+    OpponentWin,
+    GameOngoing
+};
+
 struct State
 {
     Board board;

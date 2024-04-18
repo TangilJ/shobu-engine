@@ -10,7 +10,6 @@
 #include <pybind11/stl.h>
 #include "engine/movegen.h"
 #include "engine/print.h"
-#include "engine/search.h"
 
 namespace py = pybind11;
 
