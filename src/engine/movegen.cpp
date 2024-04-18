@@ -94,7 +94,7 @@ void generatePassiveMoves(const Quarter quarter,
             continue;
 
         Bitboard ownAfterPassive = quarter.own ^ stone | moveOne;
-        int sourceStoneIndex = 15 - _tzcnt_u16(stone);
+        int sourceStoneIndex = 15 - _tzcnt_u32(stone);
         moveOnes.add(ownAfterPassive, sourceStoneIndex);
 
         // Second passive move if first move was allowed
@@ -126,7 +126,7 @@ void generateAggressiveMoves(const Quarter quarter,
         if (!legal) continue;
 
         const Quarter aggr1 = applyAggressiveMove<direction>(quarter, stone);
-        int sourceStoneIndex = 15 - _tzcnt_u16(stone);
+        int sourceStoneIndex = 15 - _tzcnt_u32(stone);
         moveOnes.add(aggr1, sourceStoneIndex);
 
 
