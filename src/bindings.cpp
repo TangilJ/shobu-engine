@@ -61,6 +61,11 @@ PYBIND11_MODULE(engine, m)
         .value("DownLeft", Direction::DownLeft)
         .value("Left", Direction::Left)
         .value("UpLeft", Direction::UpLeft);
+    
+    py::enum_<Win>(m, "Win")
+        .value("GameOngoing", Win::GameOngoing)
+        .value("OwnWin", Win::OwnWin)
+        .value("OpponentWin", Win::OpponentWin);
 
     py::class_<Move>(m, "Move")
         .def_readonly("passive_source_index", &Move::passiveSourceIndex)
@@ -84,6 +89,12 @@ PYBIND11_MODULE(engine, m)
         "reverse_board",
         &reverseBoard,
         "Swap the sides of the board."
+    );
+    
+    m.def(
+        "check_win",
+        &checkWin,
+        "Check if the game has ended."
     );
 
     m.def(
