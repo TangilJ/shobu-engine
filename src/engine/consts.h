@@ -13,11 +13,17 @@ constexpr Bitboard right            = 0b0001'0001'0001'0001;
 constexpr Bitboard empty            = 0b0000'0000'0000'0000;
 // @formatter:on
 
-constexpr Board startState = {
+constexpr Board startBoard = {
     {ownStartPieces, enemyStartPieces},
     {ownStartPieces, enemyStartPieces},
     {ownStartPieces, enemyStartPieces},
     {ownStartPieces, enemyStartPieces}
+};
+
+constexpr State startState = {
+    startBoard,
+    {},
+    Win::GameOngoing
 };
 
 #endif //SHOBU_CONSTS_H

@@ -10,6 +10,7 @@
 #include <pybind11/stl.h>
 #include "engine/movegen.h"
 #include "engine/print.h"
+#include "engine/consts.h"
 
 namespace py = pybind11;
 
@@ -79,6 +80,8 @@ PYBIND11_MODULE(engine, m)
         .def_readwrite("board", &State::board)
         .def_readwrite("move", &State::move)
         .def_readwrite("win", &State::win);
+    
+    m.attr("start_state") = startState;
 
     m.def(
         "get_next_states",
