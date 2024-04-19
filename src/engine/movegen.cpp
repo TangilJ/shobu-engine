@@ -33,7 +33,7 @@ Win checkWin(const Board board)
     return Win::GameOngoing;
 }
 
-// Is the target allowed to be where it is, given the current quarterboard?
+// Is the target allowed to be where it is, given the current quarter?
 bool isPassiveMoveLegal(Bitboard target,
                         Bitboard ownStones,
                         Bitboard enemyStones)

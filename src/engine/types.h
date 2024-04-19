@@ -67,14 +67,14 @@ struct Board
     }
 
     template<Location location>
-    constexpr Board setQuarter(const Quarter quarterboard) const
+    constexpr Board setQuarter(const Quarter quarter) const
     {
         // @formatter:off
         return Board{
-            location == Location::TopLeft         ? quarterboard : topLeft,
-            location == Location::TopRight       ? quarterboard : topRight,
-            location == Location::BottomLeft   ? quarterboard : bottomLeft,
-            location == Location::BottomRight ? quarterboard : bottomRight,
+            location == Location::TopLeft         ? quarter : topLeft,
+            location == Location::TopRight       ? quarter : topRight,
+            location == Location::BottomLeft   ? quarter : bottomLeft,
+            location == Location::BottomRight ? quarter : bottomRight,
         };
         // @formatter:on
 
