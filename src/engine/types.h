@@ -167,6 +167,7 @@ struct State
 {
     Board board;
     Move move; // Move that led to this state
+    Win win;
 };
 
 #endif //SHOBU_TYPES_H

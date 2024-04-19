@@ -77,7 +77,8 @@ PYBIND11_MODULE(engine, m)
 
     py::class_<State>(m, "State")
         .def_readwrite("board", &State::board)
-        .def_readwrite("move", &State::move);
+        .def_readwrite("move", &State::move)
+        .def_readwrite("win", &State::win);
 
     m.def(
         "get_next_states",
@@ -89,12 +90,6 @@ PYBIND11_MODULE(engine, m)
         "reverse_board",
         &reverseBoard,
         "Swap the sides of the board."
-    );
-    
-    m.def(
-        "check_win",
-        &checkWin,
-        "Check if the game has ended."
     );
 
     m.def(
