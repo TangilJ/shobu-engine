@@ -61,7 +61,7 @@ PYBIND11_MODULE(engine, m)
         .value("DownLeft", Direction::DownLeft)
         .value("Left", Direction::Left)
         .value("UpLeft", Direction::UpLeft);
-    
+
     py::enum_<Win>(m, "Win")
         .value("GameOngoing", Win::GameOngoing)
         .value("OwnWin", Win::OwnWin)
@@ -96,5 +96,17 @@ PYBIND11_MODULE(engine, m)
         "to_bit_string",
         &toBitString,
         "Convert a bitboard to a string representation."
+    );
+
+    m.def(
+        "print_board",
+        py::overload_cast<const Board>(&print),
+        "Print the board."
+    );
+
+    m.def(
+        "print_bitboard",
+        py::overload_cast<const Bitboard>(&print),
+        "Print the board."
     );
 }
