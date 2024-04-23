@@ -243,17 +243,18 @@ void generateAllMovesInPly(const Board board,
 
 Bitboard reverseBitboard(Bitboard x)
 {
+    // @formatter:off
     // Adapted from:
     // https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating
     const Bitboard x1 = 0b0101'0101'0101'0101;
     const Bitboard x2 = 0b0011'0011'0011'0011;
     const Bitboard x4 = 0b0000'1111'0000'1111;
-    const Bitboard x8 = 0b0000'0000'1111'1111;
     x = ((x >> 1) & x1) | ((x & x1) << 1); // Swap adjacent bits
     x = ((x >> 2) & x2) | ((x & x2) << 2); // Swap pairs
     x = ((x >> 4) & x4) | ((x & x4) << 4); // Swap nibbles
-    x = ((x >> 8) & x8) | ((x & x8) << 8); // Swap bytes
+    x = (x >> 8)        | (x << 8);        // Swap bytes
     return x;
+    // @formatter:on
 }
 
 Quarter reverseQuarter(const Quarter &quarter)
