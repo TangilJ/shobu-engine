@@ -16,14 +16,13 @@ namespace py = pybind11;
 
 std::vector<State> getNextStates(const Board &board)
 {
-    std::vector<State> states;
-
+    // There are no successor states if it's a terminal node
     if (checkWin(board) != Win::GameOngoing)
-        return states;
+        return {};
 
+    std::vector<State> states;
     states.reserve(250);
     generateAllMovesInPly(board, states);
-
     return states;
 }
 
@@ -80,7 +79,7 @@ PYBIND11_MODULE(engine, m)
         .def_readwrite("board", &State::board)
         .def_readwrite("move", &State::move)
         .def_readwrite("win", &State::win);
-    
+
     m.attr("start_state") = startState;
 
     m.def(
