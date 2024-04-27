@@ -1,4 +1,5 @@
 #include <intrin.h>
+#include "movegen.h"
 #include "types.h"
 #include "consts.h"
 
@@ -174,6 +175,7 @@ void combinePassiveAggressive(const Board &board,
 
             Board newBoard = board.setQuarter<passiveBoard>(newPassive);
             newBoard = newBoard.setQuarter<aggressiveBoard>(aggressiveMoves[i]);
+            newBoard = reverseBoard(newBoard);
             Move move = {
                 passiveMoves.getSourceIndex(j),
                 aggressiveMoves.getSourceIndex(i),
