@@ -8,6 +8,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <immintrin.h>
 #include "engine/movegen.h"
 #include "engine/print.h"
 #include "engine/consts.h"
@@ -24,6 +25,11 @@ std::vector<State> getNextStates(const Board &board)
     states.reserve(250);
     generateAllMovesInPly(board, states);
     return states;
+}
+
+int popcnt(const unsigned int b)
+{
+    return _mm_popcnt_u32(b);
 }
 
 PYBIND11_MODULE(engine, m)
@@ -110,5 +116,11 @@ PYBIND11_MODULE(engine, m)
         "print_bitboard",
         py::overload_cast<const Bitboard>(&print),
         "Print the board."
+    );
+
+    m.def(
+        "popcnt",
+        &popcnt,
+        "Population count"
     );
 }
