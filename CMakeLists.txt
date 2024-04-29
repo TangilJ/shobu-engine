@@ -41,6 +41,14 @@ add_executable(
 )
 target_link_libraries(Shobu ShobuEngine)
 
+add_executable(
+        NNUE
+        src/nnue/main.cpp
+        src/nnue/parse.h
+        src/nnue/linear.h
+        src/nnue/accumulator.h
+        src/nnue/network.h
+)
 
 # Tests only run on Debug mode
 add_subdirectory(extern/doctest)
