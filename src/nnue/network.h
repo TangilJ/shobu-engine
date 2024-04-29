@@ -22,7 +22,12 @@ struct Network
     float forward(std::array<float, 1024> x)
     {
         auto h1 = layer1.forward(x);
-        auto h2 = layer2.forward(layer1.relu(h1));
+        return forwardAfterInitial(h1);
+    }
+
+    float forwardAfterInitial(std::array<float, hidden1> x)
+    {
+        auto h2 = layer2.forward(layer1.relu(x));
         auto h3 = layer3.forward(layer2.relu(h2));
         return output.forward(layer3.relu(h3))[0];
     }
