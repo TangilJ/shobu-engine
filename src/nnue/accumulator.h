@@ -6,6 +6,8 @@
 #include <future>
 #include "linear.h"
 #include "src/engine/types.h"
+#include "src/engine/consts.h"
+#include "src/engine/movegen.h"
 
 enum Player : int
 {
@@ -17,31 +19,39 @@ template<int size>
 class Accumulator
 {
 public:
+    std::array<float, size> p1;
+    std::array<float, size> p2;
+    Board p1Board{};
+    Board p2Board{};
+
     template<int inputs>
-    Accumulator(Linear<inputs, size> linear, std::vector<int> &activeIdxs)
+    Accumulator(Linear<inputs, size> linear, Board board)
     {
         for (int i = 0; i < size; ++i)
             p1[i] = linear.biases[i];
 
-        for (const int a: activeIdxs)
+        p2 = p1; // Player 1 and 2's biases are the same
+
+        for (const int a: getActiveIndexes(board))
             for (int i = 0; i < size; ++i)
                 p1[i] += linear.weights[a][i];
 
-        // Player 1 and 2's accumulated values are
-        // the same at the start of the game
-        p2 = p1;
+        for (const int a: getActiveIndexes(reverseBoard(board)))
+            for (int i = 0; i < size; ++i)
+                p2[i] += linear.weights[a][i];
+
+        p1Board = startState.board;
+        p2Board = startState.board;
     }
 
-    template<int inputs, Player player>
-    Accumulator<size> update(Linear<inputs, size> linear,
-                             Board previous,
-                             Board current)
+    template<int inputs>
+    Accumulator<size> update(Linear<inputs, size> linear, Board current, Player player)
     {
         std::vector<int> added;
         std::vector<int> removed;
 
         auto activeIdxs = getActiveIndexes(current);
-        auto prevActiveIdxs = getActiveIndexes(previous);
+        auto prevActiveIdxs = getActiveIndexes(player == P1 ? p1Board : p2Board);
 
         std::set_difference(activeIdxs.begin(), activeIdxs.end(),
                             prevActiveIdxs.begin(), prevActiveIdxs.end(),
@@ -51,35 +61,17 @@ public:
                             activeIdxs.begin(), activeIdxs.end(),
                             std::inserter(removed, removed.begin()));
 
-        return updateFeatures<player>(linear, added, removed);
-    }
-
-private:
-    std::array<float, size> p1;
-    std::array<float, size> p2;
-
-    template<Player player>
-    float operator [](int idx)
-    {
-        return player == P1 ? p1[idx] : p2[idx];
-    }
-
-    template<int inputs, Player player>
-    Accumulator<size> updateFeatures(Linear<inputs, size> linear,
-                                     std::vector<int> &added,
-                                     std::vector<int> &removed)
-    {
-        Accumulator<size> updated = *this;
-
-        for (const int a: added)
-            for (int i = 0; i < size; i++)
-                updated[player][i] += linear.weights[a][i];
-
-        for (const int r: removed)
-            for (int i = 0; i < size; i++)
-                updated[player][i] -= linear.weights[r][i];
+        auto updated = *this;
+        updateFeatures<inputs>(updated, linear, added, removed, player);
+        if (player == P1) updated.p1Board = current;
+        else updated.p2Board = current;
 
         return updated;
+    }
+
+    std::array<float, size> &operator [](Player player)
+    {
+        return player == P1 ? p1 : p2;
     }
 
     static std::set<int> getActiveIndexes(Board board)
@@ -94,6 +86,24 @@ private:
         addQuarterIndexes<Location::BottomLeft, true>(board, active);
         addQuarterIndexes<Location::BottomRight, true>(board, active);
         return active;
+    }
+
+private:
+    template<int inputs>
+    void updateFeatures(Accumulator<size> &updated,
+                        Linear<inputs, size> linear,
+                        std::vector<int> &added,
+                        std::vector<int> &removed,
+                        Player player)
+    {
+        for (const int a: added)
+            for (int i = 0; i < size; i++)
+                updated[player][i] += linear.weights[a][i];
+
+        for (const int r: removed)
+            for (int i = 0; i < size; i++)
+                updated[player][i] -= linear.weights[r][i];
+
     }
 
     template<Location location, bool enemyPerspective>
